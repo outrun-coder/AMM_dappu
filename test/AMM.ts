@@ -5,8 +5,10 @@ import { expect } from 'chai';
 
 describe('AMM_CONTRACT:', () => {
   // ! CONTRACTS
-  let tokenContract: any;
+  let dappuContract: any;
+  let dappuContractAddress: string;
   let musdcContract: any;
+  let musdcContractAddress: string;
   let ammContract: any;
   let accounts: any;
   // const bogusAddress = '0x0000000000000000000000000000000000000000';
@@ -27,18 +29,24 @@ describe('AMM_CONTRACT:', () => {
   // let result: any;
 
   beforeEach(async() => {
-    // ! TOKEN: SCRATCH
+    // ! TOKEN: DAPP
     const contractFactory_0 = await ethers.getContractFactory('Token');
-    tokenContract = await contractFactory_0.deploy('Dapp U', 'DAPP', '1000000');
+    dappuContract = await contractFactory_0.deploy('Dapp U', 'DAPP', '1000000');
+    dappuContractAddress = dappuContract.address;
 
     // ! TOKEN: MUSDC
     const contractFactory_1 = await ethers.getContractFactory('Token');
     musdcContract = await contractFactory_1.deploy('Mock USDC', 'MUSDC', '1000000');
+    musdcContractAddress = musdcContract.address;
 
     //! AMM init
     const contractFactory_2 = await ethers.getContractFactory('AMM');
-    ammContract = await contractFactory_2.deploy();
 
+    ammContract = await contractFactory_2.deploy({
+      _token1Address: dappuContractAddress,
+      _token2Address: musdcContractAddress,
+    });
+    
     // ACCOUNTS
     accounts = await ethers.getSigners();
     // DESTRUCTURE ACTORS
@@ -56,9 +64,12 @@ describe('AMM_CONTRACT:', () => {
   
   describe('Deployment:', () => {
     it('Has an address name', async () => {
-      // console.log('>> WTH:', ammContract);
-      
       expect(ammContract.address).to.not.equal(0x0);
+    });
+
+    it('Returns expected token addresses', async () => {
+      expect(await ammContract.dappuTokenContract()).to.equal(dappuContractAddress);
+      expect(await ammContract.musdcTokenContract()).to.equal(musdcContractAddress);
     });
   });
 
