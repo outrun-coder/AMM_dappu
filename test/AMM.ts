@@ -106,6 +106,9 @@ describe('AMM_CONTRACT:', () => {
         // Check AMM recieves tokens
         expect(await dappuContract.balanceOf(ammContract.address)).to.equal(depositAmount);
         expect(await musdcContract.balanceOf(ammContract.address)).to.equal(depositAmount);
+
+        expect(await ammContract.dappuTokenBalance()).to.equal(depositAmount);
+        expect(await ammContract.musdcTokenBalance()).to.equal(depositAmount);
       }));
     });
 

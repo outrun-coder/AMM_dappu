@@ -18,6 +18,10 @@ contract AMM {
   Token public dappuTokenContract;
   Token public musdcTokenContract;
 
+  uint256 public dappuTokenBalance;
+  uint256 public musdcTokenBalance;
+  uint256 public K;
+
   constructor(AmmDeploymentAgs memory args) {
     dappuTokenContract = args._token1Address;
     musdcTokenContract = args._token2Address;
@@ -35,9 +39,11 @@ contract AMM {
       'Failed to transfer MUSDC token'
     );
     
-
     // Issue Shares
 
     // Manage Pool
+    dappuTokenBalance += _token1Amount;
+    musdcTokenBalance += _token2Amount;
+    K = dappuTokenBalance * musdcTokenBalance;
   }
 }
