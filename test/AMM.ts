@@ -89,6 +89,26 @@ describe('AMM_CONTRACT:', () => {
     });
   });
 
+    describe('Swapping tokens', () => {
+      let depositAmount, transaction, result;
+      it('facilitates liquidity depositing', (async () => {
+        // Deployer approves 100k tokens
+        depositAmount = Convert.TokensToWei(100000);
+        transaction = await dappuContract.connect(deployer).approve(ammContract.address, depositAmount);
+        await transaction.wait();
+
+        transaction = await musdcContract.connect(deployer).approve(ammContract.address, depositAmount);
+        await transaction.wait();
+
+        // Deployer adds Liquidity
+        transaction = await ammContract.connect(deployer).addLiquidity(depositAmount, depositAmount);
+
+        // Check AMM recieves tokens
+        expect(await dappuContract.balanceOf(ammContract.address)).to.equal(depositAmount);
+        expect(await musdcContract.balanceOf(ammContract.address)).to.equal(depositAmount);
+      }));
+    });
+
   // describe('TEMP_DESC', () => {
   //   describe('Success', () => {
   //     beforeEach(async () => {
