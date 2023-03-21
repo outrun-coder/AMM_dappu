@@ -1,9 +1,9 @@
 import { ethers } from 'hardhat';
 
 const Convert = {
-  TokensToWei: (nString: string) => {
+  TokensToWei: (amount: any) => {
     // 1 => 1000000000000000000
-    return ethers.utils.parseUnits(nString.toString(), 'ether');
+    return ethers.utils.parseUnits(amount.toString(), 'ether');
   },
   
   WeiToTokens: (bigNumber: any) => {

@@ -1,5 +1,6 @@
 import { ethers } from 'hardhat';
 import { expect } from 'chai';
+import Convert from '../utils/token-conversion';
 
 
 
@@ -16,8 +17,11 @@ describe('AMM_CONTRACT:', () => {
   let deployer: any;
   let deployerAddress: string;
   //
-  let receiver: any;
-  let receiverAddress: string;
+  let liquidityProvider: any;
+  let liquidityProviderAddress: string;
+  //
+  // let receiver: any;
+  // let receiverAddress: string;
   //
   let exchange: any;
   let exchangeAddress: string;
@@ -25,10 +29,27 @@ describe('AMM_CONTRACT:', () => {
   //
 
   // let transferAmount: any;
-  // let transaction: any;
+  let transaction: any;
   // let result: any;
 
   beforeEach(async() => {
+    // ! ACCOUNTS
+    accounts = await ethers.getSigners();
+    // DESTRUCTURE ACTORS
+    [
+      deployer,
+      liquidityProvider,
+      // receiver,
+      exchange
+    ] = accounts;
+    // COLLECT ACTOR ADDRESSES
+    deployerAddress = deployer.address;
+    liquidityProviderAddress = liquidityProvider.address;
+    // receiverAddress = receiver.address;
+    exchangeAddress = exchange.address;
+
+    //
+
     // ! TOKEN: DAPP
     const contractFactory_0 = await ethers.getContractFactory('Token');
     dappuContract = await contractFactory_0.deploy('Dapp U', 'DAPP', '1000000');
@@ -39,6 +60,12 @@ describe('AMM_CONTRACT:', () => {
     musdcContract = await contractFactory_1.deploy('Mock USDC', 'MUSDC', '1000000');
     musdcContractAddress = musdcContract.address;
 
+    // ! DIST TOKENS TO LIQUIDITY PROVIDER    
+    transaction = await dappuContract.connect(deployer).transfer(liquidityProviderAddress, Convert.TokensToWei(100000));
+    await transaction.wait();
+    transaction = await musdcContract.connect(deployer).transfer(liquidityProviderAddress, Convert.TokensToWei(100000));
+    await transaction.wait();
+
     //! AMM init
     const contractFactory_2 = await ethers.getContractFactory('AMM');
 
@@ -47,18 +74,7 @@ describe('AMM_CONTRACT:', () => {
       _token2Address: musdcContractAddress,
     });
     
-    // ACCOUNTS
-    accounts = await ethers.getSigners();
-    // DESTRUCTURE ACTORS
-    [
-      deployer,
-      receiver,
-      exchange
-    ] = accounts;
-    // COLLECT ACTOR ADDRESSES
-    deployerAddress = deployer.address;
-    receiverAddress = receiver.address;
-    exchangeAddress = exchange.address;
+    
   });
 
   
