@@ -109,6 +109,12 @@ describe('AMM_CONTRACT:', () => {
 
         expect(await ammContract.dappuTokenBalance()).to.equal(depositAmount);
         expect(await ammContract.musdcTokenBalance()).to.equal(depositAmount);
+
+        // check that deployer has 100 shares
+        expect(await ammContract.shares(deployerAddress)).to.equal(Convert.TokensToWei(100));
+
+        // Check pool has 100 total shares
+        expect(await ammContract.totalShares()).to.equal(Convert.TokensToWei(100));
       }));
     });
 

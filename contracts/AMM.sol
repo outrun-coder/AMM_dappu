@@ -22,6 +22,11 @@ contract AMM {
   uint256 public musdcTokenBalance;
   uint256 public K;
 
+  uint256 public totalShares;
+  mapping(address => uint256) public shares;
+
+  uint256 constant PRECISION = 10**18;
+
   constructor(AmmDeploymentAgs memory args) {
     dappuTokenContract = args._token1Address;
     musdcTokenContract = args._token2Address;
@@ -39,11 +44,23 @@ contract AMM {
       'Failed to transfer MUSDC token'
     );
     
-    // Issue Shares
-
     // Manage Pool
     dappuTokenBalance += _token1Amount;
     musdcTokenBalance += _token2Amount;
     K = dappuTokenBalance * musdcTokenBalance;
+
+    // Issue Shares
+    uint claculatedShare;
+    if (totalShares == 0) {
+      // FIRST TIME LP
+      claculatedShare = 100 * PRECISION;
+    } else {
+      // ADDITIONAL CONTRIBUTOR
+    }
+
+    // UPDATE SHARE STATE MANAGEMENT
+    totalShares += claculatedShare;
+    shares[msg.sender] += claculatedShare;
+
   }
 }
