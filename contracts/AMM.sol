@@ -24,9 +24,17 @@ contract AMM {
   }
 
   function addLiquidity(uint256 _token1Amount, uint256 _token2Amount) public {
+    
     // Deposit Tokes
-    dappuTokenContract.transferFrom(msg.sender, address(this), _token1Amount);
-    musdcTokenContract.transferFrom(msg.sender, address(this), _token2Amount);
+    require(
+      dappuTokenContract.transferFrom(msg.sender, address(this), _token1Amount),
+      'Failed to transfer DAPP token'
+    );
+    require(
+      musdcTokenContract.transferFrom(msg.sender, address(this), _token2Amount),
+      'Failed to transfer MUSDC token'
+    );
+    
 
     // Issue Shares
 
