@@ -69,6 +69,24 @@ contract AMM {
     // UPDATE SHARES
     totalShares += claculatedShare;
     shares[msg.sender] += claculatedShare;
+  }
 
+  // NOTE - fx = (targetTknBalance_b * providedTknAmount_a) / providedTknBalance_a;
+  // Determine "dappu" deposit amount for LP of "musdc"
+  function claculateDAPPUDepositAmt(uint256 _musdcAmt)
+    public
+    view
+    returns(uint256 dappuAmt)
+  {
+    dappuAmt = (dappuTokenBalance * _musdcAmt) / musdcTokenBalance;
+  }
+
+  // Determine "musdc" deposit amount for LP of "dappu"
+  function claculateMUSDCDepositAmt(uint256 _dappuAmt)
+    public
+    view
+    returns(uint256 musdcAmt)
+  {
+    musdcAmt = (musdcTokenBalance * _dappuAmt) / dappuTokenBalance;
   }
 }

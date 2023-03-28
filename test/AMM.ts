@@ -133,8 +133,11 @@ describe('AMM_CONTRACT:', () => {
         transaction = await musdcContract.connect(liquidityProvider).approve(ammContract.address, depositAmount);
         await transaction.wait();
 
+        // Calc musdc deposit amount;
+        let musdcDeposit = await ammContract.claculateMUSDCDepositAmt(depositAmount);
+
         // LP adds Liquidity
-        transaction = await ammContract.connect(liquidityProvider).addLiquidity(depositAmount, depositAmount);
+        transaction = await ammContract.connect(liquidityProvider).addLiquidity(depositAmount, musdcDeposit);
 
         // LP should have 50 shares
         expect(await ammContract.shares(liquidityProviderAddress)).to.equal(lpShares);
