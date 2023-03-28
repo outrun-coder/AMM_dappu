@@ -44,21 +44,29 @@ contract AMM {
       'Failed to transfer MUSDC token'
     );
     
-    // Manage Pool
-    dappuTokenBalance += _token1Amount;
-    musdcTokenBalance += _token2Amount;
-    K = dappuTokenBalance * musdcTokenBalance;
-
     // Issue Shares
     uint claculatedShare;
     if (totalShares == 0) {
       // FIRST TIME LP
       claculatedShare = 100 * PRECISION;
     } else {
-      // ADDITIONAL CONTRIBUTOR
+      // ADDITIONAL CONTRIBUTION
+      uint256 share1 = (totalShares * _token1Amount) / dappuTokenBalance;
+      uint256 share2 = (totalShares * _token2Amount) / musdcTokenBalance;
+      require(
+        // NOTE - ROUNDING ALLOWS FOR MINISCULE WEI AMOUNTS TO BE NORMALIZED FOR COMPARISON - EXPLINATION AT 00:41:36 of W7-Vid_04
+        (share1 / 10**3) == (share2 / 10**3),
+        "must provide equal token amounts"
+      );
+      claculatedShare = share1;
     }
 
-    // UPDATE SHARE STATE MANAGEMENT
+    // Manage Pool
+    dappuTokenBalance += _token1Amount;
+    musdcTokenBalance += _token2Amount;
+    K = dappuTokenBalance * musdcTokenBalance;
+
+    // UPDATE SHARES
     totalShares += claculatedShare;
     shares[msg.sender] += claculatedShare;
 

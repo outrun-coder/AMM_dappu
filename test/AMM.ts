@@ -92,8 +92,14 @@ describe('AMM_CONTRACT:', () => {
     describe('Swapping tokens', () => {
       let depositAmount, transaction, result;
       it('facilitates liquidity depositing', (async () => {
+        const [deployerSharesAmt, lpSharesAmt] = [100, 50];
+        const deployerShares = Convert.TokensToWei(deployerSharesAmt);
+        const lpShares = Convert.TokensToWei(lpSharesAmt)
+        const totalCombinedShares = Convert.TokensToWei(deployerSharesAmt + lpSharesAmt);
+
         // Deployer approves 100k tokens
         depositAmount = Convert.TokensToWei(100000);
+
         transaction = await dappuContract.connect(deployer).approve(ammContract.address, depositAmount);
         await transaction.wait();
 
@@ -111,10 +117,33 @@ describe('AMM_CONTRACT:', () => {
         expect(await ammContract.musdcTokenBalance()).to.equal(depositAmount);
 
         // check that deployer has 100 shares
-        expect(await ammContract.shares(deployerAddress)).to.equal(Convert.TokensToWei(100));
+        expect(await ammContract.shares(deployerAddress)).to.equal(deployerShares);
 
         // Check pool has 100 total shares
-        expect(await ammContract.totalShares()).to.equal(Convert.TokensToWei(100));
+        expect(await ammContract.totalShares()).to.equal(deployerShares);
+
+
+        ///////////////////////
+        // LP adds more liquidity
+        depositAmount = Convert.TokensToWei(50000);
+        
+        transaction = await dappuContract.connect(liquidityProvider).approve(ammContract.address, depositAmount);
+        await transaction.wait();
+
+        transaction = await musdcContract.connect(liquidityProvider).approve(ammContract.address, depositAmount);
+        await transaction.wait();
+
+        // LP adds Liquidity
+        transaction = await ammContract.connect(liquidityProvider).addLiquidity(depositAmount, depositAmount);
+
+        // LP should have 50 shares
+        expect(await ammContract.shares(liquidityProviderAddress)).to.equal(lpShares);
+
+        // Deployer should still have 100 shares
+        expect(await ammContract.shares(deployerAddress)).to.equal(deployerShares);
+
+        // Pool should have 150 shares
+        expect(await ammContract.totalShares()).to.equal(totalCombinedShares);
       }));
     });
 
