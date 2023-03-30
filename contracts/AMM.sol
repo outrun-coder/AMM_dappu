@@ -90,6 +90,19 @@ contract AMM {
     musdcAmt = (musdcTokenBalance * _dappuAmt) / dappuTokenBalance;
   }
 
+  event Swap(
+    address user,
+    address tokenGive,
+    uint256 tokenGiveAmount,
+    address tokenGet,
+    uint256 tokenGetAmount,
+    uint256 dappuBalance,
+    uint256 musdcBalance,
+    uint256 timestamp
+  );
+
+  // ! DAPPU => MUSDC
+
   function calculateDAPPU_swap(uint256 _dappuAmount) public view returns(uint musdcAmount) {
     uint256 dappuAfter = dappuTokenBalance + _dappuAmount;
     uint256 musdcAfter = K / dappuAfter;
@@ -102,17 +115,6 @@ contract AMM {
   
     require(musdcAmount < musdcTokenBalance, "swap amount cannot exceed pool balance");
   }
-
-  event Swap(
-    address user,
-    address tokenGive,
-    uint256 tokenGiveAmount,
-    address tokenGet,
-    uint256 tokenGetAmount,
-    uint256 dappuBalance,
-    uint256 musdcBalance,
-    uint256 timestamp
-  );
 
   function swapDappu(uint256 _dappuAmount) external returns(uint256 musdcAmount) {
     // calc amount of musdc
@@ -141,5 +143,45 @@ contract AMM {
     );
   }
 
-  function swapMusdc() external returns(uint256 dappuAmount) {}
+  // ! MUSDC => DAPPU
+  
+  function calculateMUSDC_swap(uint256 _musdcAmount) public view returns(uint dappuAmount) {
+    uint256 musdcAfter = musdcTokenBalance + _musdcAmount;
+    uint256 dappuAfter = K / musdcAfter;
+
+    dappuAmount = dappuTokenBalance - dappuAfter;
+
+    if(dappuAmount == dappuTokenBalance) {
+      dappuAmount--;
+    }
+  
+    require(dappuAmount < dappuTokenBalance, "swap amount cannot exceed pool balance");
+  }
+  
+  function swapMusdc(uint256 _musdcAmount) external returns(uint256 dappuAmount) {
+    // calc amount of dappu
+    dappuAmount = calculateMUSDC_swap(_musdcAmount);
+
+    // do the swap
+    // 1.) Transfer dappu tokens out of user wallet to contract
+    musdcTokenContract.transferFrom(msg.sender, address(this), _musdcAmount);
+    // 2.) Update the dappu balance in the dex contract
+    musdcTokenBalance += _musdcAmount;
+    // 3.) Update the musdc balance in the dex contract
+    dappuTokenBalance -= dappuAmount;
+    // 4.) Transfer musdc tokens from dex to user wallet
+    dappuTokenContract.transfer(msg.sender, dappuAmount);
+
+    // emit an event
+    emit Swap(
+      msg.sender,
+      address(musdcTokenContract),
+      _musdcAmount,
+      address(dappuTokenContract),
+      dappuAmount,
+      dappuTokenBalance,
+      musdcTokenBalance,
+      block.timestamp
+    );
+  }
 }
