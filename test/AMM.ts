@@ -213,7 +213,63 @@ describe('AMM_CONTRACT:', () => {
         expect(await musdcContract.balanceOf(ammContract.address)).to.equal(await ammContract.musdcTokenBalance());
 
         // Check PRICE after swap
-        console.log(`After swap price: ${await ammContract.musdcTokenBalance() / await ammContract.dappuTokenBalance()}`);
+        console.log(`After swap price: ${await ammContract.musdcTokenBalance() / await ammContract.dappuTokenBalance()}\n`);
+
+
+        ///////////////////////
+        // Investor 1 swaps AGAIN dappu => musdc
+
+        // check investor_1 musdc balance before swap
+        balance = await musdcContract.balanceOf(investor_1Address);
+        console.log('>> INVESTOR 1 MUSDC BALANCE BEFORE:', balance);
+
+        // estimate amt of tkns inv1 will receive after swapping dappu: include slippage
+        estimate = await ammContract.calculateDAPPU_swap(swapWithAmt);
+        console.log(`MUSDC amount investor_1 will receive after swap: ${ethers.utils.formatEther(estimate)}`);
+
+        // do the swap!
+        transaction = await ammContract.connect(investor_1).swapDappu(swapWithAmt);
+        await transaction.wait();
+
+        // Check inv_1 musdc balance
+        balance = await musdcContract.balanceOf(investor_1Address);
+        console.log(`Investor 1 musdc balance is: ${balance}`);
+
+        // Verify that AMM token balances are in sync
+        expect(await dappuContract.balanceOf(ammContract.address)).to.equal(await ammContract.dappuTokenBalance());
+        expect(await musdcContract.balanceOf(ammContract.address)).to.equal(await ammContract.musdcTokenBalance());
+
+        // Check PRICE after swap
+        console.log(`After swap price: ${await ammContract.musdcTokenBalance() / await ammContract.dappuTokenBalance()}\n`);
+
+
+        ///////////////////////
+        // Investor 1 swaps AGAIN LRG amount dappu => musdc
+
+        const swapWithLRGAmt = Convert.TokensToWei(100);
+
+        // check investor_1 musdc balance before swap
+        balance = await musdcContract.balanceOf(investor_1Address);
+        console.log('>> INVESTOR 1 MUSDC BALANCE BEFORE:', balance);
+
+        // estimate amt of tkns inv1 will receive after swapping dappu: include slippage
+        estimate = await ammContract.calculateDAPPU_swap(swapWithLRGAmt);
+        console.log(`MUSDC amount investor_1 will receive after swap: ${ethers.utils.formatEther(estimate)}`);
+
+        // do the swap!
+        transaction = await ammContract.connect(investor_1).swapDappu(swapWithLRGAmt);
+        await transaction.wait();
+
+        // Check inv_1 musdc balance
+        balance = await musdcContract.balanceOf(investor_1Address);
+        console.log(`Investor 1 musdc balance is: ${balance}`);
+
+        // Verify that AMM token balances are in sync
+        expect(await dappuContract.balanceOf(ammContract.address)).to.equal(await ammContract.dappuTokenBalance());
+        expect(await musdcContract.balanceOf(ammContract.address)).to.equal(await ammContract.musdcTokenBalance());
+
+        // Check PRICE after swap
+        console.log(`After swap price: ${await ammContract.musdcTokenBalance() / await ammContract.dappuTokenBalance()} \n`);
       }));
     });
 
