@@ -111,6 +111,9 @@ describe('AMM_CONTRACT:', () => {
         const lpShares = Convert.TokensToWei(lpSharesAmt)
         const totalCombinedShares = Convert.TokensToWei(deployerSharesAmt + lpSharesAmt);
 
+        ///////////////////////
+        // ! DEPLOYMENT
+
         // Deployer approves 100k tokens
         depositAmount = Convert.TokensToWei(100000);
 
@@ -138,7 +141,7 @@ describe('AMM_CONTRACT:', () => {
 
 
         ///////////////////////
-        // LP adds more liquidity
+        // ! LP adds more liquidity
         depositAmount = Convert.TokensToWei(50000);
         
         transaction = await dappuContract.connect(liquidityProvider).approve(ammContract.address, depositAmount);
@@ -165,7 +168,7 @@ describe('AMM_CONTRACT:', () => {
         console.log('\n>> INVESTOR_1\n');
 
         ///////////////////////
-        // Investor 1 swaps dappu => musdc
+        // ! Investor 1 swaps dappu => musdc
 
         // Check PRICE before swap
         console.log(`Before swap price: ${await ammContract.musdcTokenBalance() / await ammContract.dappuTokenBalance()}`);
@@ -218,7 +221,7 @@ describe('AMM_CONTRACT:', () => {
 
 
         ///////////////////////
-        // Investor 1 swaps AGAIN dappu => musdc
+        // ! Investor 1 swaps AGAIN dappu => musdc
 
         // check investor_1 musdc balance before swap
         balance = await musdcContract.balanceOf(investor_1Address);
@@ -245,7 +248,7 @@ describe('AMM_CONTRACT:', () => {
 
 
         ///////////////////////
-        // Investor 1 swaps AGAIN LRG amount dappu => musdc
+        // ! Investor 1 swaps AGAIN LRG amount dappu => musdc
 
         const swapWithLRGAmt = Convert.TokensToWei(100);
 
@@ -276,7 +279,7 @@ describe('AMM_CONTRACT:', () => {
         console.log('\n>> INVESTOR_2\n');
 
         ///////////////////////
-        // Investor 2 swaps musdc => dappu
+        // ! Investor 2 swaps musdc => dappu
 
         // Check PRICE before swap
         console.log(`Before swap price: ${await ammContract.dappuTokenBalance() / await ammContract.musdcTokenBalance()}`);
@@ -326,6 +329,39 @@ describe('AMM_CONTRACT:', () => {
 
         // Check PRICE after swap
         console.log(`After swap price: ${await ammContract.musdcTokenBalance() / await ammContract.dappuTokenBalance()}\n`);
+      
+      
+        ///////////////////////
+        // ! REMOVE LIQUIDITY
+
+        console.log('\n>> REMOVE LIQUIDITY\n');
+        
+        console.log(`AMM DAPPU Token Balance: ${ethers.utils.formatEther(await ammContract.dappuTokenBalance())} \n`);
+        console.log(`AMM MUSDC Token Balance: ${ethers.utils.formatEther(await ammContract.musdcTokenBalance())} \n`);
+
+        // check LP bal before token removal
+        let lpBalance_tkn1 = await dappuContract.balanceOf(liquidityProviderAddress);
+        console.log(`LP DAPPU balance BEFORE removing funds: ${ethers.utils.formatEther(lpBalance_tkn1)} \n`);
+        let lpBalance_tkn2 = await musdcContract.balanceOf(liquidityProviderAddress);
+        console.log(`LP MUSDC balance BEFORE removing funds: ${ethers.utils.formatEther(lpBalance_tkn2)} \n`);
+        
+        // LP removes tokens from AMM pool
+        const shares = Convert.TokensToWei(50);
+        transaction = await ammContract.connect(liquidityProvider).removeLiquidity(shares);
+        await transaction.wait();
+        
+        // visual conf of remaining balances
+        lpBalance_tkn1 = await dappuContract.balanceOf(liquidityProviderAddress);
+        console.log(`LP DAPPU balance AFTER removing funds: ${ethers.utils.formatEther(lpBalance_tkn1)} \n`);
+        lpBalance_tkn2 = await musdcContract.balanceOf(liquidityProviderAddress);
+        console.log(`LP MUSDC balance AFTER removing funds: ${ethers.utils.formatEther(lpBalance_tkn2)} \n`);
+
+        // LP should have 0 shares
+        expect(await ammContract.shares(liquidityProviderAddress)).to.equal(0);
+        // DEPLOYER should have 100 shares
+        expect(await ammContract.shares(deployerAddress)).to.equal(Convert.TokensToWei(100));
+        // AMM pool has 100 total shares
+        expect(await ammContract.totalShares()).to.equal(Convert.TokensToWei(100));
       }));
     });
 

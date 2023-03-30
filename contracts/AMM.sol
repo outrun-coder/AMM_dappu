@@ -71,6 +71,41 @@ contract AMM {
     shares[msg.sender] += claculatedShare;
   }
 
+  // Determine tokens to be withdrawn
+  function calculateWitdrawAmount(uint256 _share)
+    public
+    view
+    returns(uint256 dappuAmount, uint256 musdcAmount)
+  {
+    require(_share <= totalShares, "Shares submitted must be less than or equal to tatal shares");
+    dappuAmount = (_share * dappuTokenBalance) / totalShares;
+    musdcAmount = (_share * musdcTokenBalance) / totalShares;
+  }
+
+  // Removes liquidity
+  function removeLiquidity(uint256 _share)
+    external
+    returns(uint256 dappuAmount, uint256 musdcAmount)
+  {
+    require(_share <= shares[msg.sender], "Shares submitted must be less than or equal to user's total shares");
+    (dappuAmount, musdcAmount) = calculateWitdrawAmount(_share);
+
+    // deduct shares from mapping
+    shares[msg.sender] -= _share;
+    totalShares -= _share;
+
+    // deduct token balances
+    dappuTokenBalance -= dappuAmount;
+    musdcTokenBalance -= musdcAmount;
+
+    // TRADERS do not change price / LPs change price
+    K = dappuTokenBalance * musdcTokenBalance;
+
+    // tokens back to LP user
+    dappuTokenContract.transfer(msg.sender, dappuAmount);
+    musdcTokenContract.transfer(msg.sender, musdcAmount);
+  }
+
   // NOTE - fx = (targetTknBalance_b * providedTknAmount_a) / providedTknBalance_a;
   // Determine "dappu" deposit amount for LP of "musdc"
   function claculateDAPPUDepositAmt(uint256 _musdcAmt)
