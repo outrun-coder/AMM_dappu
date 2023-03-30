@@ -182,6 +182,22 @@ describe('AMM_CONTRACT:', () => {
         transaction = await ammContract.connect(investor_1).swapDappu(swapWithAmt);
         result = await transaction.wait();
 
+        // Check for swap event
+        let blockNmuber = await ethers.provider.getBlockNumber();
+        let block = await ethers.provider.getBlock(blockNmuber);
+
+        await expect(transaction).to.emit(ammContract, 'Swap')
+          .withArgs(
+            investor_1Address,
+            dappuContractAddress,
+            swapWithAmt,
+            musdcContractAddress,
+            estimate,
+            await ammContract.dappuTokenBalance(),
+            await ammContract.musdcTokenBalance(),
+            block.timestamp
+          );
+
         // Check inv_1 musdc balance
         balance = await musdcContract.balanceOf(investor_1Address);
         console.log(`Investor 1 musdc balance is: ${balance}`);

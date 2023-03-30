@@ -103,6 +103,17 @@ contract AMM {
     require(musdcAmount < musdcTokenBalance, "swap amount cannot exceed pool balance");
   }
 
+  event Swap(
+    address user,
+    address tokenGive,
+    uint256 tokenGiveAmount,
+    address tokenGet,
+    uint256 tokenGetAmount,
+    uint256 dappuBalance,
+    uint256 musdcBalance,
+    uint256 timestamp
+  );
+
   function swapDappu(uint256 _dappuAmount) external returns(uint256 musdcAmount) {
     // calc amount of musdc
     musdcAmount = calculateDAPPU_swap(_dappuAmount);
@@ -118,6 +129,16 @@ contract AMM {
     musdcTokenContract.transfer(msg.sender, musdcAmount);
 
     // emit an event
+    emit Swap(
+      msg.sender,
+      address(dappuTokenContract),
+      _dappuAmount,
+      address(musdcTokenContract),
+      musdcAmount,
+      dappuTokenBalance,
+      musdcTokenBalance,
+      block.timestamp
+    );
   }
 
   function swapMusdc() external returns(uint256 dappuAmount) {}
