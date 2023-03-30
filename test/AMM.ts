@@ -165,6 +165,10 @@ describe('AMM_CONTRACT:', () => {
 
         ///////////////////////
         // Investor 1 swaps dappu => musdc
+
+        // Check PRICE before swap
+        console.log(`Before swap price: ${await ammContract.musdcTokenBalance() / await ammContract.dappuTokenBalance()}`);
+
         // Investor 1 approves all the tokens
         transaction = await dappuContract.connect(investor_1).approve(ammContract.address, lpDistAmountTest)
         await transaction.wait();
@@ -207,6 +211,9 @@ describe('AMM_CONTRACT:', () => {
         // Verify that AMM token balances are in sync
         expect(await dappuContract.balanceOf(ammContract.address)).to.equal(await ammContract.dappuTokenBalance());
         expect(await musdcContract.balanceOf(ammContract.address)).to.equal(await ammContract.musdcTokenBalance());
+
+        // Check PRICE after swap
+        console.log(`After swap price: ${await ammContract.musdcTokenBalance() / await ammContract.dappuTokenBalance()}`);
       }));
     });
 
