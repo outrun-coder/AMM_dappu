@@ -20,8 +20,11 @@ describe('AMM_CONTRACT:', () => {
   let liquidityProvider: any;
   let liquidityProviderAddress: string;
   //
-  // let receiver: any;
-  // let receiverAddress: string;
+  let investor_1: any;
+  let investor_1Address: string;
+  //
+  let investor_2: any;
+  let investor_2Address: string;
   //
   let exchange: any;
   let exchangeAddress: string;
@@ -39,16 +42,19 @@ describe('AMM_CONTRACT:', () => {
     [
       deployer,
       liquidityProvider,
-      // receiver,
+      investor_1,
+      investor_2,
       exchange
     ] = accounts;
     // COLLECT ACTOR ADDRESSES
     deployerAddress = deployer.address;
     liquidityProviderAddress = liquidityProvider.address;
-    // receiverAddress = receiver.address;
+    investor_1Address = investor_1.address;
+    investor_2Address = investor_2.address;
     exchangeAddress = exchange.address;
 
     //
+    const lpDistAmount = Convert.TokensToWei(100000);
 
     // ! TOKEN: DAPP
     const contractFactory_0 = await ethers.getContractFactory('Token');
@@ -61,9 +67,16 @@ describe('AMM_CONTRACT:', () => {
     musdcContractAddress = musdcContract.address;
 
     // ! DIST TOKENS TO LIQUIDITY PROVIDER    
-    transaction = await dappuContract.connect(deployer).transfer(liquidityProviderAddress, Convert.TokensToWei(100000));
+    transaction = await dappuContract.connect(deployer).transfer(liquidityProviderAddress, lpDistAmount);
     await transaction.wait();
-    transaction = await musdcContract.connect(deployer).transfer(liquidityProviderAddress, Convert.TokensToWei(100000));
+    transaction = await musdcContract.connect(deployer).transfer(liquidityProviderAddress, lpDistAmount);
+    await transaction.wait();
+
+    //! Send dappu to investor_1
+    transaction = await dappuContract.connect(deployer).transfer(investor_1Address, lpDistAmount);
+    await transaction.wait();
+    //! Send musdc to investor_2
+    transaction = await musdcContract.connect(deployer).transfer(investor_2Address, lpDistAmount);
     await transaction.wait();
 
     //! AMM init
@@ -90,7 +103,8 @@ describe('AMM_CONTRACT:', () => {
   });
 
     describe('Swapping tokens', () => {
-      let depositAmount, transaction, result;
+      let depositAmount, transaction, result, estimate, balance;
+      const lpDistAmountTest = Convert.TokensToWei(100000);
       it('facilitates liquidity depositing', (async () => {
         const [deployerSharesAmt, lpSharesAmt] = [100, 50];
         const deployerShares = Convert.TokensToWei(deployerSharesAmt);
@@ -147,6 +161,36 @@ describe('AMM_CONTRACT:', () => {
 
         // Pool should have 150 shares
         expect(await ammContract.totalShares()).to.equal(totalCombinedShares);
+
+
+        ///////////////////////
+        // Investor 1 swaps dappu => musdc
+        // Investor 1 approves all the tokens
+        transaction = await dappuContract.connect(investor_1).approve(ammContract.address, lpDistAmountTest)
+        await transaction.wait();
+
+        // check investor_1 musdc balance before swap
+        balance = await musdcContract.balanceOf(investor_1Address);
+        console.log('>> INVESTOR 1 MUSDC BALANCE BEFORE:', balance);
+
+        // estimate amt of tkns inv1 will receive after swapping dappu: include slippage
+        const swapWithAmt = Convert.TokensToWei(1);
+        estimate = await ammContract.calculateDAPPU_swap(swapWithAmt);
+        console.log(`MUSDC amount investor_1 will receive after swap: ${ethers.utils.formatEther(estimate)}`);
+
+        // do the swap!
+        transaction = await ammContract.connect(investor_1).swapDappu(swapWithAmt);
+        result = await transaction.wait();
+
+        // Check inv_1 musdc balance
+        balance = await musdcContract.balanceOf(investor_1Address);
+        console.log(`Investor 1 musdc balance is: ${balance}`);
+        
+        expect(estimate).to.equal(balance);
+
+        // Verify that AMM token balances are in sync
+        expect(await dappuContract.balanceOf(ammContract.address)).to.equal(await ammContract.dappuTokenBalance());
+        expect(await musdcContract.balanceOf(ammContract.address)).to.equal(await ammContract.musdcTokenBalance());
       }));
     });
 

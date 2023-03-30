@@ -89,4 +89,36 @@ contract AMM {
   {
     musdcAmt = (musdcTokenBalance * _dappuAmt) / dappuTokenBalance;
   }
+
+  function calculateDAPPU_swap(uint256 _dappuAmount) public view returns(uint musdcAmount) {
+    uint256 dappuAfter = dappuTokenBalance + _dappuAmount;
+    uint256 musdcAfter = K / dappuAfter;
+
+    musdcAmount = musdcTokenBalance - musdcAfter;
+
+    if(musdcAmount == musdcTokenBalance) {
+      musdcAmount--;
+    }
+  
+    require(musdcAmount < musdcTokenBalance, "swap amount cannot exceed pool balance");
+  }
+
+  function swapDappu(uint256 _dappuAmount) external returns(uint256 musdcAmount) {
+    // calc amount of musdc
+    musdcAmount = calculateDAPPU_swap(_dappuAmount);
+
+    // do the swap
+    // 1.) Transfer dappu tokens out of user wallet to contract
+    dappuTokenContract.transferFrom(msg.sender, address(this), _dappuAmount);
+    // 2.) Update the dappu balance in the dex contract
+    dappuTokenBalance += _dappuAmount;
+    // 3.) Update the musdc balance in the dex contract
+    musdcTokenBalance -= musdcAmount;
+    // 4.) Transfer musdc tokens from dex to user wallet
+    musdcTokenContract.transfer(msg.sender, musdcAmount);
+
+    // emit an event
+  }
+
+  function swapMusdc() external returns(uint256 dappuAmount) {}
 }
