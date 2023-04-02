@@ -20,10 +20,12 @@ async function main() {
     investor_4,
   ] = accounts;
 
+
   // ! Fetch Network Config
   const { chainId } = await ethers.provider.getNetwork();
   const network = config[chainId];
   console.log(`>> Using network:`, network);
+
 
   // ! Fetch Series Contracts
   const dappuTokenContract = await ethers.getContractAt('Token', network.dappu.address);
@@ -37,7 +39,7 @@ async function main() {
   const ammContract = await ethers.getContractAt('AMM', network.amm.address);
   console.log(`>> AMM Token contract fetched: ${ammContract.address} \n`);
   
-  // // // // //
+
   // ! Dist. tokens to Investors
   console.log(`>> Dist tokens to investors... \n`);
   
@@ -46,7 +48,7 @@ async function main() {
   
   if (willDistribute) {
     console.log(`>> Distributing \n`);
-      // i1 - dappu
+    // i1 - dappu
     trx = await dappuTokenContract.connect(deployer).transfer(investor_1.adderss, tokens(10));
     await trx.wait();
     // i2 - musdc
@@ -59,7 +61,7 @@ async function main() {
     // i4 - musdc
     trx = await musdcTokenContract.connect(deployer).transfer(investor_4.adderss, tokens(10));
     await trx.wait();
-}
+  }
 }
 
 main().catch((err) => {
