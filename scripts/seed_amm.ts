@@ -27,7 +27,7 @@ async function main() {
   console.log(`>> Using network:`, network);
 
 
-  // ! Fetch Series Contracts
+  // ! Fetch Contract Series
   const dappuTokenContract = await ethers.getContractAt('Token', network.dappu.address);
   console.log(`>> DAPPU Token contract fetched: ${dappuTokenContract.address} \n`);
   
@@ -62,6 +62,17 @@ async function main() {
     trx = await musdcTokenContract.connect(deployer).transfer(investor_4.adderss, tokens(10));
     await trx.wait();
   }
+
+
+  // ! Add Liquidity
+  const lpAmount = tokens(100);
+
+  // token approval
+  trx = await dappuTokenContract.connect(deployer).approve(ammContract.address, lpAmount);
+  await trx.wait();
+
+  trx = await musdcTokenContract.connect(deployer).approve(ammContract.address, lpAmount);
+  await trx.wait();
 }
 
 main().catch((err) => {
