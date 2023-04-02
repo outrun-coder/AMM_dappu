@@ -17,7 +17,7 @@
     "start:local-hardhat-node": "npx hardhat node",
     "test:all-contracts": "npx hardhat test",
     "test:target-contract": "sh ./shell-scripts/test-contract.sh",
-    "deploy-local:target-contract": "sh ./shell-scripts/deploy-local-contract.sh"
+    "process-local:target-script": "sh ./shell-scripts/deploy-local-contract.sh"
   },
   "dependencies": {
     "@mdx-js/react": "^2.3.0",
