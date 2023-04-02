@@ -58,7 +58,7 @@ describe('AMM_CONTRACT:', () => {
 
     // ! TOKEN: DAPP
     const contractFactory_0 = await ethers.getContractFactory('Token');
-    dappuContract = await contractFactory_0.deploy('Dapp U', 'DAPP', '1000000');
+    dappuContract = await contractFactory_0.deploy('Dapp U', 'DAPPU', '1000000');
     dappuContractAddress = dappuContract.address;
 
     // ! TOKEN: MUSDC
