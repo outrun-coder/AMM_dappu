@@ -10,7 +10,7 @@ const shares = ether;
 
 async function main() {
   // Fetch accounts
-  console.log(`  Fetching accounts & networks \n`);
+  console.log(`>> Fetching accounts & networks \n`);
   const accounts = await ethers.getSigners();
   const [
     deployer,
@@ -20,6 +20,11 @@ async function main() {
     investor_4,
   ] = accounts;
 
+  // Fetch Network
+  const { chainId } = await ethers.provider.getNetwork();
+  const network = config[chainId];
+  console.log(`>> Using network:`, network);
+  
 }
 
 main().catch((err) => {
