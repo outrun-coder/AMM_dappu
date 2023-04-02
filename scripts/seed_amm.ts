@@ -8,7 +8,27 @@ const tokens = (n) => {
 const ether = tokens;
 const shares = ether;
 
+const STEP_CONTROL = {
+  ready: true,
+  willDistribute: true,
+  willApproveLiquidity: true,
+  willAddLiquidity: true,
+  i1WillSwapp: true,
+  i2WillSwapp: true,
+  i4WillSwapp: true
+};
+
 async function main() {
+  const {
+    ready,
+    willDistribute,
+    willApproveLiquidity,
+    willAddLiquidity,
+    i1WillSwapp,
+    i2WillSwapp,
+    i4WillSwapp
+  } = STEP_CONTROL;
+
   // ! Fetch accounts
   console.log(`>> Fetching accounts & networks \n`);
   const accounts = await ethers.getSigners();
@@ -37,39 +57,37 @@ async function main() {
 
 
   const ammContract = await ethers.getContractAt('AMM', network.amm.address);
-  console.log(`>> AMM Token contract fetched: ${ammContract.address} \n`);
+  console.log(`>> AMM contract fetched: ${ammContract.address} \n`);
   
 
   // ! Dist. tokens to Investors
-  console.log(`>> Dist tokens to investors... \n`);
+  console.log(`>> Will dist tokens to investors... \n`);
   
   let trx;
-  const willDistribute = false;
   
-  if (willDistribute) {
+  if (ready && willDistribute) {
     console.log(`>> Distributing! \n`);
     // i1 - dappu
-    trx = await dappuTokenContract.connect(deployer).transfer(investor_1.adderss, tokens(10));
+    trx = await dappuTokenContract.connect(deployer).transfer(investor_1.address, tokens(10));
     await trx.wait();
     // i2 - musdc
-    trx = await musdcTokenContract.connect(deployer).transfer(investor_2.adderss, tokens(10));
+    trx = await musdcTokenContract.connect(deployer).transfer(investor_2.address, tokens(10));
     await trx.wait();
     
     // i3 - dappu
-    trx = await dappuTokenContract.connect(deployer).transfer(investor_3.adderss, tokens(10));
+    trx = await dappuTokenContract.connect(deployer).transfer(investor_3.address, tokens(10));
     await trx.wait();
     // i4 - musdc
-    trx = await musdcTokenContract.connect(deployer).transfer(investor_4.adderss, tokens(10));
+    trx = await musdcTokenContract.connect(deployer).transfer(investor_4.address, tokens(10));
     await trx.wait();
   }
 
 
   // ! Approving Liquidity
-  console.log(`>> Approving Liquidity for AMM...\n`);
+  console.log(`>> Will approving Liquidity for AMM...\n`);
   const lpAmount = tokens(100);
-  const willApproveLiquidity = false;
 
-  if (willApproveLiquidity) {
+  if (ready && willApproveLiquidity) {
     console.log(`>> Approving! \n`);
     // token approval
     trx = await dappuTokenContract.connect(deployer).approve(ammContract.address, lpAmount);
@@ -79,15 +97,72 @@ async function main() {
     await trx.wait();
   }
 
-  // ! DEPLOYER adds liquidity
-  console.log(`>> Deployer adds liquidity...\n`);
-  const willAddLiquidity = false;
 
-  if (willAddLiquidity) {
+  // ! DEPLOYER adds liquidity
+  console.log(`>> Will add liquidity from DEPLOYER...\n`);
+
+  if (ready && willAddLiquidity) {
     console.log(`>> Adding Liquidity! \n`);
     trx = await ammContract.connect(deployer).addLiquidity(lpAmount, lpAmount);
     await trx.wait();
   }
+
+  // VARS
+  const swapApproval = tokens(10);
+  const firstSwapAmmount = tokens(1);
+  const secondSwapAmmount = tokens(10);
+
+  // ! INVESTOR 1 SWAPPS DAPPU => MUSDC 1
+  console.log(`>> INVESTOR_1 will swap 1 DAPPU => MUSDC...\n`);
+
+  if (ready && i1WillSwapp) {
+    console.log(`>> i1 approving! \n`);
+    trx = await dappuTokenContract.connect(investor_1).approve(ammContract.address, swapApproval);
+    await trx.wait();
+    console.log(`>> i1 swapping! \n`);
+    trx = await ammContract.connect(investor_1).swapDappu(firstSwapAmmount);
+    await trx.wait();
+  }
+
+
+  // ! INVESTOR 2 SWAPPS MUSDC => DAPPU 1
+  console.log(`>> INVESTOR_2 will swap 1 MUSDC => DAPPU...\n`);
+
+  if (ready && i2WillSwapp) {
+    console.log(`>> i2 approving! \n`);
+    trx = await musdcTokenContract.connect(investor_2).approve(ammContract.address, swapApproval);
+    console.log(`>> i2 swapping! \n`);
+    trx = await ammContract.connect(investor_2).swapMusdc(firstSwapAmmount);
+    await trx.wait();
+  }
+
+
+  // ! INVESTOR 3 SWAPPS DAPPU => MUSDC 10
+  console.log(`>> INVESTOR_3 will swap 10 DAPPU => MUSDC...\n`);
+  const i3WillSwapp = true;
+
+  if (ready && i3WillSwapp) {
+    console.log(`>> i3 approving! \n`);
+    trx = await dappuTokenContract.connect(investor_3).approve(ammContract.address, swapApproval);
+    await trx.wait();
+    console.log(`>> i3 swapping! \n`);
+    trx = await ammContract.connect(investor_3).swapDappu(secondSwapAmmount);
+    await trx.wait();
+  }
+
+
+  // ! INVESTOR 4 SWAPPS MUSDC => DAPPU 5
+  console.log(`>> INVESTOR_4 will swap 5 MUSDC => DAPPU...\n`);
+
+  if (ready && i4WillSwapp) {
+    console.log(`>> i4 approving! \n`);
+    trx = await musdcTokenContract.connect(investor_4).approve(ammContract.address, swapApproval);
+    console.log(`>> i4 swapping! \n`);
+    trx = await ammContract.connect(investor_4).swapMusdc(tokens(5));
+    await trx.wait();
+  }
+
+  console.log(`>> FINISHED! \n`);
   
 }
 
