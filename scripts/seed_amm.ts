@@ -47,7 +47,7 @@ async function main() {
   const willDistribute = false;
   
   if (willDistribute) {
-    console.log(`>> Distributing \n`);
+    console.log(`>> Distributing! \n`);
     // i1 - dappu
     trx = await dappuTokenContract.connect(deployer).transfer(investor_1.adderss, tokens(10));
     await trx.wait();
@@ -64,15 +64,31 @@ async function main() {
   }
 
 
-  // ! Add Liquidity
+  // ! Approving Liquidity
+  console.log(`>> Approving Liquidity for AMM...\n`);
   const lpAmount = tokens(100);
+  const willApproveLiquidity = false;
 
-  // token approval
-  trx = await dappuTokenContract.connect(deployer).approve(ammContract.address, lpAmount);
-  await trx.wait();
+  if (willApproveLiquidity) {
+    console.log(`>> Approving! \n`);
+    // token approval
+    trx = await dappuTokenContract.connect(deployer).approve(ammContract.address, lpAmount);
+    await trx.wait();
+  
+    trx = await musdcTokenContract.connect(deployer).approve(ammContract.address, lpAmount);
+    await trx.wait();
+  }
 
-  trx = await musdcTokenContract.connect(deployer).approve(ammContract.address, lpAmount);
-  await trx.wait();
+  // ! DEPLOYER adds liquidity
+  console.log(`>> Deployer adds liquidity...\n`);
+  const willAddLiquidity = false;
+
+  if (willAddLiquidity) {
+    console.log(`>> Adding Liquidity! \n`);
+    trx = await ammContract.connect(deployer).addLiquidity(lpAmount, lpAmount);
+    await trx.wait();
+  }
+  
 }
 
 main().catch((err) => {
