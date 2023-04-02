@@ -20,10 +20,18 @@ async function main() {
     investor_4,
   ] = accounts;
 
-  // Fetch Network
+  // Fetch Network Config
   const { chainId } = await ethers.provider.getNetwork();
   const network = config[chainId];
   console.log(`>> Using network:`, network);
+
+  // Fetch Series Contracts
+  const dappuTokenContract = await ethers.getContractAt('Token', network.dappu.address);
+  console.log(`>> DAPPU Token contract fetched: ${dappuTokenContract.address} \n`);
+  
+
+  const musdcTokenContract = await ethers.getContractAt('Token', network.musdc.address);
+  console.log(`>> MUSDC Token contract fetched: ${musdcTokenContract.address} \n`);
   
 }
 
