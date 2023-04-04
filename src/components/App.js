@@ -1,6 +1,8 @@
 import * as React from "react"
 
 import { useEffect, useState } from 'react'
+import { useDispatch } from "react-redux"
+
 import { Container } from 'react-bootstrap'
 import { ethers } from 'ethers'
 
@@ -14,11 +16,16 @@ import Loading from './Loading';
 // Config: Import your network config here
 import config from '../config.json';
 
+import { setAccount } from '../store/reducers/ethers-provider';
+
 function App() {
+  const dispatch = useDispatch();
+
   const [provider, setProvider] = useState(null);
   // const [daoContract, setDaoContract] = useState(null);
 
-  const [account, setAccount] = useState(null)
+  let account = '0x0...';
+  // const [account, setAccount] = useState(null)
 
   const [isLoading, setIsLoading] = useState(true)
 
@@ -37,7 +44,7 @@ function App() {
     // Fetch accounts
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
     const account = ethers.utils.getAddress(accounts[0])
-    setAccount(account)
+    dispatch(setAccount(account));
 
     setIsLoading(false)
   }
