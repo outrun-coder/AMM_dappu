@@ -8,6 +8,8 @@ import logo from './logo.png';
 const Navigation = () => {
   const account = useSelector(state => state.ethersProvider.account);
 
+  const truncatedAccount = `${account.slice(0,5)}...${account.slice(38, 42)}`
+
   return (
     <Navbar className='my-3'>
       <img
@@ -20,7 +22,7 @@ const Navigation = () => {
       <Navbar.Brand href="#">Dapp University DAO</Navbar.Brand>
       <Navbar.Collapse className="justify-content-end">
         <Navbar.Text>
-          {account}
+          {truncatedAccount}
         </Navbar.Text>
       </Navbar.Collapse>
     </Navbar>
