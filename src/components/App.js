@@ -16,7 +16,8 @@ import {
   loadProvider,
   loadNetwork,
   loadAccount,
-  loadTokenContracts
+  loadTokenContracts,
+  loadAmmContract
 } from "../store/interactions"
 
 function App() {
@@ -27,7 +28,15 @@ function App() {
   const loadBlockchainData = async () => {
     const provider = loadProvider(dispatch);
     const chainId = await loadNetwork(provider, dispatch);
-    const tokenContracts = loadTokenContracts(provider, chainId, dispatch);
+    const tokenContracts = await loadTokenContracts(dispatch, {
+      chainId,
+      provider
+    });
+    const ammContract = await loadAmmContract(dispatch, {
+      chainId,
+      provider
+    });
+      
     await loadAccount(dispatch);
 
     setIsLoading(false)

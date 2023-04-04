@@ -9,13 +9,21 @@ export const tokenContracts = createSlice({
   },
   reducers: {
     setContracts: (state, action) => {
-      state.contracts = action.payload
+      state.contracts = action.payload;
+    },
+    setSymbols: (state, action) => {
+      state.symbols = action.payload;
+    },
+    setBalances: (state, action) => {
+      state.balances = action.payload;
     }
   }
 });
 
 export const {
-  setContracts
+  setContracts,
+  setSymbols,
+  setBalances
 } = tokenContracts.actions;
 
 export default tokenContracts.reducer;

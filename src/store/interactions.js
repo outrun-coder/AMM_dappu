@@ -6,8 +6,13 @@ import {
 } from './reducers/ethers-provider';
 
 import {
-  setContracts
+  setContracts,
+  setSymbols,
 } from './reducers/token-contracts';
+
+import {
+  setAmmContract
+} from './reducers/amm-contract';
 
 import TOKEN_ABI from '../abis/Token.json';
 import AMM_ABI from '../abis/AMM.json';
@@ -39,10 +44,10 @@ export const loadAccount = async (dispatch) => {
 
 // ! LOAD CONTRACTS
 
-export const loadTokenContracts = async (provider, chainId, dispatch) => {
+export const loadTokenContracts = async (dispatch, args) => {
+  const { chainId, provider } = args;
   // const network = 
   const { dappu, musdc } = config[chainId];
-
   const dappuContract = new ethers.Contract(dappu.address, TOKEN_ABI, provider);
   const musdcContract = new ethers.Contract(musdc.address, TOKEN_ABI, provider);
 
@@ -51,6 +56,23 @@ export const loadTokenContracts = async (provider, chainId, dispatch) => {
     musdcContract
   ];
 
+  const symbols = [
+    await dappuContract.symbol(),
+    await musdcContract.symbol()
+  ]
+
   dispatch(setContracts(contracts));
+  dispatch(setSymbols(symbols));
   return contracts;
+}
+
+export const loadAmmContract = async (dispatch, args) => {
+  const { chainId, provider } = args;
+  // const network = 
+  const { amm } = config[chainId];
+  const ammContract = new ethers.Contract(amm.address, AMM_ABI, provider);
+
+  dispatch(setAmmContract(ammContract));
+  return ammContract;
+}
 }
