@@ -16,7 +16,7 @@ import Loading from './Loading';
 // Config: Import your network config here
 import config from '../config.json';
 
-import { setAccount } from '../store/reducers/ethers-provider';
+import { loadAccount } from "../store/interactions"
 
 function App() {
   const dispatch = useDispatch();
@@ -42,9 +42,7 @@ function App() {
     // setDaoContract(daoContract);
 
     // Fetch accounts
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
-    const account = ethers.utils.getAddress(accounts[0])
-    dispatch(setAccount(account));
+    await loadAccount(dispatch);
 
     setIsLoading(false)
   }
