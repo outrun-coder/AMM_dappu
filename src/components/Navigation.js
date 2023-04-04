@@ -1,10 +1,13 @@
 import * as React from "react"
+import { useSelector } from 'react-redux';
 
 import Navbar from 'react-bootstrap/Navbar';
 
 import logo from './logo.png';
 
-const Navigation = ({ account }) => {
+const Navigation = () => {
+  const account = useSelector(state => state.ethersProvider.account);
+
   return (
     <Navbar className='my-3'>
       <img
