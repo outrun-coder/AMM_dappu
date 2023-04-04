@@ -8,12 +8,15 @@ export const ethersProvider = createSlice({
     account: null
   },
   reducers: {
+    setConnection: (state, action) => {
+      state.connection = action.payload;
+    },
     setAccount: (state, action) => {
       state.account = action.payload;
     }
   }
 });
 
-export const { setAccount } = ethersProvider.actions;
+export const { setConnection, setAccount } = ethersProvider.actions;
 
 export default ethersProvider.reducer;

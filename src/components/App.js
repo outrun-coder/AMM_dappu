@@ -16,7 +16,10 @@ import Loading from './Loading';
 // Config: Import your network config here
 import config from '../config.json';
 
-import { loadAccount } from "../store/interactions"
+import {
+  loadProvider,
+  loadAccount
+} from "../store/interactions"
 
 function App() {
   const dispatch = useDispatch();
@@ -34,8 +37,7 @@ function App() {
     const { token, dao } = config[31337];
 
     // Initiate provider
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    setProvider(provider);
+    const provider = loadProvider(dispatch);
 
     // initialize contracts
     // const daoContract = new ethers.Contract(dao.address, DAO_ABI, provider);
