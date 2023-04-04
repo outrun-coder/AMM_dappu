@@ -8,16 +8,16 @@
     "gatsby"
   ],
   "scripts": {
-    "develop": "gatsby develop",
     "start": "gatsby develop",
     "build": "gatsby build",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
     "typecheck": "tsc --noEmit",
-    "start:local-hardhat-node": "npx hardhat node",
     "test:all-contracts": "npx hardhat test",
     "test:target-contract": "sh ./shell-scripts/test-contract.sh",
-    "process-local:target-script": "sh ./shell-scripts/deploy-local-contract.sh"
+    "process-local:target-script": "sh ./shell-scripts/deploy-local-contract.sh",
+    "start:local-hardhat-node": "npx hardhat node",
+    "start:ui-dev": "gatsby develop"
   },
   "dependencies": {
     "@mdx-js/react": "^2.3.0",
