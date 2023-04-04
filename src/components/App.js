@@ -12,13 +12,11 @@ import Loading from './Loading';
 // ABIs: Import your contract ABIs here
 // import DAO_ABI from '../abis/DAO.json'
 
-// Config: Import your network config here
-import config from '../config.json';
-
 import {
   loadProvider,
   loadNetwork,
-  loadAccount
+  loadAccount,
+  loadTokenContracts
 } from "../store/interactions"
 
 function App() {
@@ -29,6 +27,7 @@ function App() {
   const loadBlockchainData = async () => {
     const provider = loadProvider(dispatch);
     const chainId = await loadNetwork(provider, dispatch);
+    const tokenContracts = loadTokenContracts(provider, chainId, dispatch);
     await loadAccount(dispatch);
 
     setIsLoading(false)

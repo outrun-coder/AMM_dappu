@@ -5,6 +5,16 @@ import {
   setAccount
 } from './reducers/ethers-provider';
 
+import {
+  setContracts
+} from './reducers/token-contracts';
+
+import TOKEN_ABI from '../abis/Token.json';
+import AMM_ABI from '../abis/AMM.json';
+
+// Config: Import your network config here
+import config from '../config.json';
+
 export const loadProvider = (dispatch) => {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   dispatch(setConnection(provider));
@@ -25,4 +35,22 @@ export const loadAccount = async (dispatch) => {
   dispatch(setAccount(account));
 
   return account;
+}
+
+// ! LOAD CONTRACTS
+
+export const loadTokenContracts = async (provider, chainId, dispatch) => {
+  // const network = 
+  const { dappu, musdc } = config[chainId];
+
+  const dappuContract = new ethers.Contract(dappu.address, TOKEN_ABI, provider);
+  const musdcContract = new ethers.Contract(musdc.address, TOKEN_ABI, provider);
+
+  const contracts = [
+    dappuContract,
+    musdcContract
+  ];
+
+  dispatch(setContracts(contracts));
+  return contracts;
 }
