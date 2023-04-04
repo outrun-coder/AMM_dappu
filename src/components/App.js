@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { useDispatch } from "react-redux"
 
 import { Container } from 'react-bootstrap'
-import { ethers } from 'ethers'
 
 // Components
 import Navigation from './Navigation';
@@ -25,28 +24,11 @@ import {
 function App() {
   const dispatch = useDispatch();
 
-  const [provider, setProvider] = useState(null);
-  // const [daoContract, setDaoContract] = useState(null);
-
-  let account = '0x0...';
-  // const [account, setAccount] = useState(null)
-
   const [isLoading, setIsLoading] = useState(true)
 
   const loadBlockchainData = async () => {
-    // const network = 
-    const { token, dao } = config[31337];
-
-    // Initiate provider
     const provider = loadProvider(dispatch);
-
-    const chainId = loadNetwork(provider, dispatch);
-
-    // initialize contracts
-    // const daoContract = new ethers.Contract(dao.address, DAO_ABI, provider);
-    // setDaoContract(daoContract);
-
-    // Fetch accounts
+    const chainId = await loadNetwork(provider, dispatch);
     await loadAccount(dispatch);
 
     setIsLoading(false)
@@ -60,7 +42,7 @@ function App() {
 
   return(
     <Container>
-      <Navigation account={account} />
+      <Navigation account={'0x0...'} />
 
       <h1 className='my-4 text-center'>Welcome to our AMM!</h1>
 
