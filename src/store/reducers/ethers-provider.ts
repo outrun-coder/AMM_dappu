@@ -11,12 +11,19 @@ export const ethersProvider = createSlice({
     setConnection: (state, action) => {
       state.connection = action.payload;
     },
+    setNetwork: (state, action) => {
+      state.chainId = action.payload;
+    },
     setAccount: (state, action) => {
       state.account = action.payload;
     }
   }
 });
 
-export const { setConnection, setAccount } = ethersProvider.actions;
+export const {
+  setConnection,
+  setNetwork,
+  setAccount
+} = ethersProvider.actions;
 
 export default ethersProvider.reducer;

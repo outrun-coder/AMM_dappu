@@ -18,6 +18,7 @@ import config from '../config.json';
 
 import {
   loadProvider,
+  loadNetwork,
   loadAccount
 } from "../store/interactions"
 
@@ -38,6 +39,8 @@ function App() {
 
     // Initiate provider
     const provider = loadProvider(dispatch);
+
+    const chainId = loadNetwork(provider, dispatch);
 
     // initialize contracts
     // const daoContract = new ethers.Contract(dao.address, DAO_ABI, provider);
