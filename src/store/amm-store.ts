@@ -1,10 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import provider from "./reducers/provider";
+import ethersProvider from "./reducers/ethers-provider";
 
 
-export const store = configureStore({
+export const ammStore = configureStore({
   reducer: {
-    provider
+    ethersProvider
   },
   middleware: getDefaultMiddleware => 
     getDefaultMiddleware({

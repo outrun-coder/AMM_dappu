@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-export const provider = createSlice({
-  name: 'provider',
+export const ethersProvider = createSlice({
+  name: 'ethersProvider',
   initialState: {
     connection: null,
     chainId: null,
@@ -12,4 +12,4 @@ export const provider = createSlice({
   }
 });
 
-export default provider.reducer;
+export default ethersProvider.reducer;
