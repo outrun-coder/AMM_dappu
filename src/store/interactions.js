@@ -8,6 +8,7 @@ import {
 import {
   setContracts,
   setSymbols,
+  setBalances
 } from './reducers/token-contracts';
 
 import {
@@ -75,4 +76,19 @@ export const loadAmmContract = async (dispatch, args) => {
   dispatch(setAmmContract(ammContract));
   return ammContract;
 }
+
+// ! LOAD BALANCES & SHARES
+
+export const loadBalances = async (dispach, args) => {
+  const {
+    tokenContracts,
+    account
+  } = args;
+
+  const balances = await tokenContracts.map(async(contract) => {
+    const bal = await contract.balanceOf(account);
+    return bal;
+  });
+
+  dispach(setBalances(balances));
 }
