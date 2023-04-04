@@ -1,0 +1,68 @@
+import * as React from "react"
+
+import { useEffect, useState } from 'react'
+import { Container } from 'react-bootstrap'
+import { ethers } from 'ethers'
+
+// Components
+import Navigation from './Navigation';
+import Loading from './Loading';
+
+// ABIs: Import your contract ABIs here
+// import DAO_ABI from '../abis/DAO.json'
+
+// Config: Import your network config here
+import config from '../config.json';
+
+function App() {
+  const [provider, setProvider] = useState(null);
+  // const [daoContract, setDaoContract] = useState(null);
+
+  const [account, setAccount] = useState(null)
+
+  const [isLoading, setIsLoading] = useState(true)
+
+  const loadBlockchainData = async () => {
+    // const network = 
+    const { token, dao } = config[31337];
+
+    // Initiate provider
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    setProvider(provider);
+
+    // initialize contracts
+    // const daoContract = new ethers.Contract(dao.address, DAO_ABI, provider);
+    // setDaoContract(daoContract);
+
+    // Fetch accounts
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+    const account = ethers.utils.getAddress(accounts[0])
+    setAccount(account)
+
+    setIsLoading(false)
+  }
+
+  useEffect(() => {
+    if (isLoading) {
+      loadBlockchainData()
+    }
+  }, [isLoading]);
+
+  return(
+    <Container>
+      <Navigation account={account} />
+
+      <h1 className='my-4 text-center'>Welcome to our AMM!</h1>
+
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <>
+          <h1>App interface goes here!</h1>
+        </>
+      )}
+    </Container>
+  );
+}
+
+export default App;

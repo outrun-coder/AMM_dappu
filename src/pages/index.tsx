@@ -139,11 +139,17 @@ const links = [
 import { Provider } from "react-redux"
 import { ammStore } from "../store/amm-store"
 
+import '../index.css';
+import 'bootstrap/dist/css/bootstrap.css'
+
+// @ts-ignore
+import App from '../components/App';
+
 const IndexPage: React.FC<PageProps> = () => {
   return (
     <React.StrictMode>
       <Provider store={ammStore}>
-        <h1>APP GOES HERE!!!</h1>
+        <App />
       </Provider>
     </React.StrictMode>
   )
