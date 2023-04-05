@@ -24,6 +24,7 @@ const Navigation = () => {
   // read
   const chainId = useSelector(state => state.ethersProvider.chainId);
   const tokenContracts = useSelector(state => state.tokenContracts.contracts);
+  const ammContract = useSelector(state => state.ammContract.contract);
   const currentAccount = useSelector(state => state.ethersProvider.account);
   const truncatedAccount = (currentAccount) ? `${currentAccount.slice(0,5)}...${currentAccount.slice(38, 42)}` : 'N/A';
 
@@ -40,6 +41,7 @@ const Navigation = () => {
     const account = await loadAccount(dispatch);
     await loadBalances(dispatch, {
       tokenContracts,
+      ammContract,
       account
     });
 
@@ -48,6 +50,7 @@ const Navigation = () => {
       const nextAccount = await loadAccount(dispatch);
       loadBalances(dispatch, {
         tokenContracts,
+        ammContract,
         account: nextAccount
       })
     });

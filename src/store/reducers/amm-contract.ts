@@ -12,11 +12,15 @@ export const ammContract = createSlice({
     setAmmContract: (state, action) => {
       state.contract = action.payload;
     },
+    setShares: (state, action) => {
+      state.shares = action.payload;
+    }
   }
 });
 
 export const {
-  setAmmContract
+  setAmmContract,
+  setShares
 } = ammContract.actions;
 
 export default ammContract.reducer;

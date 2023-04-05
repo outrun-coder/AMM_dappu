@@ -12,7 +12,8 @@ import {
 } from './reducers/token-contracts';
 
 import {
-  setAmmContract
+  setAmmContract,
+  setShares
 } from './reducers/amm-contract';
 
 import { toTokens } from '../utils/format-to-tokens.ts'
@@ -91,9 +92,10 @@ export const loadAmmContract = async (dispatch, args) => {
 
 // ! LOAD BALANCES & SHARES
 
-export const loadBalances = async (dispach, args) => {
+export const loadBalances = async (dispatch, args) => {
   const {
     tokenContracts,
+    ammContract,
     account
   } = args;
 
@@ -108,9 +110,11 @@ export const loadBalances = async (dispach, args) => {
   const balance1 = await tokenContracts[0].balanceOf(account);
   const balance2 = await tokenContracts[1].balanceOf(account);
 
-  dispach(setBalances([
+  dispatch(setBalances([
     toTokens(balance1),
     toTokens(balance2)
-  ]
-  ));
+  ]));
+
+  const shares = await ammContract.shares(account);
+  dispatch(setShares(toTokens(shares)));
 }
