@@ -68,7 +68,7 @@ const Navigation = () => {
   };
 
   return (
-    <Navbar className='my-3'>
+    <Navbar className='my-3' expand="lg">
       <img
         alt="logo"
         src={logo}
@@ -76,8 +76,9 @@ const Navigation = () => {
         height="40"
         className="d-inline-block align-top mx-3"
       />
-      <Navbar.Brand href="#">Dapp University DAO</Navbar.Brand>
-      <Navbar.Collapse className="justify-content-end">
+      <Navbar.Brand href="#">Dapp University AMM</Navbar.Brand>
+      <Navbar.Toggle aria-controls="nav" />
+      <Navbar.Collapse id="nav" className="justify-content-end">
 
         <div className="d-flex justify-content-end mt-3">
 
@@ -92,7 +93,7 @@ const Navigation = () => {
           </Form.Select>
         
           {(currentAccount) ? (
-            <Navbar.Text>
+            <Navbar.Text className="d-flex align-items-center">
               {truncatedAccount}
               <Blockies
                 seed={currentAccount}
