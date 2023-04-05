@@ -15,7 +15,6 @@ import Loading from './Loading';
 import {
   loadProvider,
   loadNetwork,
-  loadAccount,
   loadTokenContracts,
   loadAmmContract
 } from "../store/interactions"
@@ -36,8 +35,6 @@ function App() {
       chainId,
       provider
     });
-      
-    await loadAccount(dispatch);
 
     setIsLoading(false)
   }
