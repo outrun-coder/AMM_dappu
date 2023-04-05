@@ -15,6 +15,8 @@ import {
   setAmmContract
 } from './reducers/amm-contract';
 
+import { toTokens } from '../utils/format-to-tokens.ts'
+
 import TOKEN_ABI from '../abis/Token.json';
 import AMM_ABI from '../abis/AMM.json';
 
@@ -85,10 +87,20 @@ export const loadBalances = async (dispach, args) => {
     account
   } = args;
 
-  const balances = await tokenContracts.map(async(contract) => {
-    const bal = await contract.balanceOf(account);
-    return bal;
-  });
+  // TODO - USE A PROMISE.ALL()
+  // const balances = await tokenContracts.map(async(contract) => {
+  //   const bal = await contract.balanceOf(account);
+  //   return bal;
+  // });
 
-  dispach(setBalances(balances));
+  // REPLACE - WITH ABOVE
+  // const balances = 
+  const balance1 = await tokenContracts[0].balanceOf(account);
+  const balance2 = await tokenContracts[1].balanceOf(account);
+
+  dispach(setBalances([
+    toTokens(balance1),
+    toTokens(balance2)
+  ]
+  ));
 }
