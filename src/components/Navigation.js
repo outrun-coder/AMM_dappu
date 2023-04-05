@@ -31,6 +31,16 @@ const Navigation = () => {
       tokenContracts,
       account
     });
+
+    // ! LISTENER ASSIGNMENT FOR ACCOUNTS_CHANGED 
+    window.ethereum.on('accountsChanged', async () => {
+      const nextAccount = await loadAccount(dispatch);
+      loadBalances(dispatch, {
+        tokenContracts,
+        account: nextAccount
+      })
+    });
+
     setAccountIsLoading(false);
   };
 
