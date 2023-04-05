@@ -49,34 +49,44 @@ export const loadAccount = async (dispatch) => {
 
 export const loadTokenContracts = async (dispatch, args) => {
   const { chainId, provider } = args;
-  // const network = 
-  const { dappu, musdc } = config[chainId];
-  const dappuContract = new ethers.Contract(dappu.address, TOKEN_ABI, provider);
-  const musdcContract = new ethers.Contract(musdc.address, TOKEN_ABI, provider);
 
-  const contracts = [
-    dappuContract,
-    musdcContract
-  ];
+  const hasProjectConfigForChain = config[chainId] != undefined;
 
-  const symbols = [
-    await dappuContract.symbol(),
-    await musdcContract.symbol()
-  ]
-
-  dispatch(setContracts(contracts));
-  dispatch(setSymbols(symbols));
-  return contracts;
+  if (hasProjectConfigForChain) {
+    // const network = 
+    const { dappu, musdc } = config[chainId];
+    const dappuContract = new ethers.Contract(dappu.address, TOKEN_ABI, provider);
+    const musdcContract = new ethers.Contract(musdc.address, TOKEN_ABI, provider);
+  
+    const contracts = [
+      dappuContract,
+      musdcContract
+    ];
+  
+    const symbols = [
+      await dappuContract.symbol(),
+      await musdcContract.symbol()
+    ]
+  
+    dispatch(setContracts(contracts));
+    dispatch(setSymbols(symbols));
+    return contracts;
+  }
 }
 
 export const loadAmmContract = async (dispatch, args) => {
   const { chainId, provider } = args;
-  // const network = 
-  const { amm } = config[chainId];
-  const ammContract = new ethers.Contract(amm.address, AMM_ABI, provider);
 
-  dispatch(setAmmContract(ammContract));
-  return ammContract;
+  const hasProjectConfigForChain = config[chainId] != undefined;
+
+  if (hasProjectConfigForChain) {
+    // const network = 
+    const { amm } = config[chainId];
+    const ammContract = new ethers.Contract(amm.address, AMM_ABI, provider);
+  
+    dispatch(setAmmContract(ammContract));
+    return ammContract;
+  }
 }
 
 // ! LOAD BALANCES & SHARES
