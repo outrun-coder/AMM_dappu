@@ -149,7 +149,9 @@ const IndexPage: React.FC<PageProps> = () => {
   return (
     <React.StrictMode>
       <Provider store={ammStore}>
-        <App />
+        <App>
+          <h1>INDEX - HOME</h1>
+        </App>
       </Provider>
     </React.StrictMode>
   )

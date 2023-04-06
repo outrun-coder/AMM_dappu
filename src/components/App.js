@@ -19,7 +19,7 @@ import {
   loadAmmContract
 } from "../store/interactions"
 
-function App() {
+function App({children}) {
   const dispatch = useDispatch();
 
   const [isLoading, setIsLoading] = useState(true)
@@ -55,7 +55,7 @@ function App() {
         <Loading />
       ) : (
         <>
-          <h1>App interface goes here!</h1>
+          {children}
         </>
       )}
     </Container>
