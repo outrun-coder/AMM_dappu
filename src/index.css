@@ -25,3 +25,9 @@ code {
 .page-container {
   text-align: center;
 }
+
+/* INTERFACE NAV */
+
+.interface-nav {
+  justify-content: center;
+}
