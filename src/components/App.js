@@ -49,14 +49,12 @@ function App({children}) {
     <Container>
       <Navigation/>
 
-      <h1 className='my-4 text-center'>Welcome to our AMM!</h1>
-
       {isLoading ? (
         <Loading />
       ) : (
-        <>
+        <div className="page-container">
           {children}
-        </>
+        </div>
       )}
     </Container>
   );

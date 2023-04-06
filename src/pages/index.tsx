@@ -150,6 +150,7 @@ const IndexPage: React.FC<PageProps> = () => {
     <React.StrictMode>
       <Provider store={ammStore}>
         <App>
+          <h1 className='my-4 text-center'>Welcome to our AMM!</h1>
           <h1>INDEX - HOME</h1>
         </App>
       </Provider>

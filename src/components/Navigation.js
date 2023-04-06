@@ -71,7 +71,7 @@ const Navigation = () => {
   };
 
   return (
-    <Navbar className='my-3' expand="lg">
+    <Navbar className='main-nav my-3' expand="lg">
       <img
         alt="logo"
         src={logo}
