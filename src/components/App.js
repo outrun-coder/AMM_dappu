@@ -59,7 +59,7 @@ function App({children}) {
             <>
               <NavTabs/>
 
-              <Card style={{ maxWidth: '450px' }} className='mx-auto px-4'>
+              <Card style={{ maxWidth: '450px' }} className='mx-auto px-4 py-4'>
                 {children}
               </Card>
             </>
