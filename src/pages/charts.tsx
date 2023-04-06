@@ -1,8 +1,10 @@
 import * as React from "react"
 import { HeadFC, PageProps } from "gatsby"
 
+import ChartsInterface from '../components/interface/Charts';
+
 const ChartsPage: React.FC<PageProps> = () => {
-  return (<h1>CHARTS</h1>)
+  return (<ChartsInterface/>)
 }
 
 export default ChartsPage

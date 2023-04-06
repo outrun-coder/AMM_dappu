@@ -1,8 +1,10 @@
 import * as React from "react"
 import { HeadFC, PageProps } from "gatsby"
 
+import DepositInterface from '../components/interface/Deposit';
+
 const DepositPage: React.FC<PageProps> = () => {
-  return (<h1>DEPOSIT</h1>)
+  return (<DepositInterface/>)
 }
 
 export default DepositPage

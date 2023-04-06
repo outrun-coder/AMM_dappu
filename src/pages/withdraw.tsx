@@ -1,8 +1,10 @@
 import * as React from "react"
 import { HeadFC, PageProps } from "gatsby"
 
+import WithdrawInterface from '../components/interface/Withdraw';
+
 const WithdrawPage: React.FC<PageProps> = () => {
-  return (<h1>WITHDRAW</h1>)
+  return (<WithdrawInterface/>)
 }
 
 export default WithdrawPage

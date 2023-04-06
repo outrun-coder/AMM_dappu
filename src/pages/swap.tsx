@@ -1,8 +1,10 @@
 import * as React from "react"
 import { HeadFC, PageProps } from "gatsby"
 
+import SwapInterface from '../components/interface/Swap';
+
 const SwapPage: React.FC<PageProps> = () => {
-  return (<h1>SWAP</h1>)
+  return (<SwapInterface/>)
 }
 
 export default SwapPage
