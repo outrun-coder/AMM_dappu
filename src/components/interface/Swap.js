@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 import {
   Form,
@@ -10,6 +11,26 @@ import {
 } from 'react-bootstrap';
 
 const SwapInterface = () => {
+  const account = useSelector(state => state.ethersProvider.account);
+  const ammContract = useSelector(state => state.ammContract.contract);
+
+  const [price, setPrice] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const initSwapInterface = async () => {
+    // getPrice
+    setPrice((await ammContract.dappuTokenBalance() / await ammContract.musdcTokenBalance()));
+
+    // done
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    if (isLoading) {
+      initSwapInterface()
+    }
+  }, [isLoading]);
+
   return (
     <Form style={{ maxWidth: '450px'}} className="mx-auto px-4">
       <Row className='My-3'>
@@ -64,7 +85,7 @@ const SwapInterface = () => {
       <Row className='my-3'>
         <Button type='submit'>Swap</Button>
         <Form.Text muted>
-          Exchange Rate:
+          Exchange Rate: {price}
         </Form.Text>
       </Row>
     </Form>
