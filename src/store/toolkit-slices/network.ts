@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-export const ethersProvider = createSlice({
-  name: 'ethersProvider',
+export const networkReducerSlice = createSlice({
+  name: 'network_reducer',
   initialState: {
     connection: null,
     chainId: null,
@@ -20,10 +20,12 @@ export const ethersProvider = createSlice({
   }
 });
 
+const { actions, reducer } = networkReducerSlice;
+
 export const {
   setConnection,
   setNetwork,
   setAccount
-} = ethersProvider.actions;
+} = actions;
 
-export default ethersProvider.reducer;
+export default reducer;

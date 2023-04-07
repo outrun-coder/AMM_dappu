@@ -23,7 +23,7 @@ import {
 function App({children}) {
   const [isLoading, setIsLoading] = useState(true);
 
-  const account = useSelector(state => state.ethersProvider.account);
+  const account = useSelector(state => state.network.account);
   const dispatch = useDispatch();
 
   const loadBlockchainData = async () => {

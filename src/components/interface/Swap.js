@@ -11,8 +11,8 @@ import {
 } from 'react-bootstrap';
 
 const SwapInterface = () => {
-  const account = useSelector(state => state.ethersProvider.account);
-  const ammContract = useSelector(state => state.ammContract.contract);
+  const account = useSelector(state => state.network.account);
+  const ammContract = useSelector(state => state.amm.contract);
 
   const [price, setPrice] = useState(0);
   const [isLoading, setIsLoading] = useState(true);

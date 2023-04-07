@@ -1,20 +1,20 @@
 import { ethers } from 'ethers'
 import {
+  setAmmContract,
+  setShares
+} from './toolkit-slices/amm';
+
+import {
   setConnection,
   setNetwork,
   setAccount
-} from './reducers/ethers-provider';
+} from './toolkit-slices/network';
 
 import {
   setContracts,
   setSymbols,
   setBalances
-} from './reducers/token-contracts';
-
-import {
-  setAmmContract,
-  setShares
-} from './reducers/amm-contract';
+} from './toolkit-slices/tokens';
 
 import { toTokens } from '../utils/format-to-tokens.ts'
 

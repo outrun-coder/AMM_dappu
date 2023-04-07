@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-export const ammContract = createSlice({
-  name: 'ammContract',
+export const ammReducerSlice = createSlice({
+  name: 'amm_reducer',
   initialState: {
     contract: null,
     shares: 0,
@@ -18,9 +18,11 @@ export const ammContract = createSlice({
   }
 });
 
+const { actions, reducer } = ammReducerSlice;
+
 export const {
   setAmmContract,
   setShares
-} = ammContract.actions;
+} = actions;
 
-export default ammContract.reducer;
+export default reducer;

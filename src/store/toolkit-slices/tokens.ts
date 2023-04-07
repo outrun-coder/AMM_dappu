@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-export const tokenContracts = createSlice({
-  name: 'tokenContracts',
+export const tokensReducerSlice = createSlice({
+  name: 'tokens_reducer',
   initialState: {
     contracts: [],
     symbols: [],
@@ -20,10 +20,12 @@ export const tokenContracts = createSlice({
   }
 });
 
+const { actions, reducer } = tokensReducerSlice;
+
 export const {
   setContracts,
   setSymbols,
   setBalances
-} = tokenContracts.actions;
+} = actions;
 
-export default tokenContracts.reducer;
+export default reducer;

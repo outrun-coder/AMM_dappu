@@ -22,10 +22,10 @@ const Navigation = () => {
   const dispatch = useDispatch();
 
   // read
-  const chainId = useSelector(state => state.ethersProvider.chainId);
-  const tokenContracts = useSelector(state => state.tokenContracts.contracts);
-  const ammContract = useSelector(state => state.ammContract.contract);
-  const currentAccount = useSelector(state => state.ethersProvider.account);
+  const chainId = useSelector(state => state.network.chainId);
+  const tokenContracts = useSelector(state => state.tokens.contracts);
+  const ammContract = useSelector(state => state.amm.contract);
+  const currentAccount = useSelector(state => state.network.account);
   const truncatedAccount = (currentAccount) ? `${currentAccount.slice(0,5)}...${currentAccount.slice(38, 42)}` : 'N/A';
 
   // ! RELOAD PAGE ON NETWORK CHANGE
