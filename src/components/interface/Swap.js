@@ -62,7 +62,7 @@ const SwapInterface = () => {
             min="0.0"
             step="any"
             value={0}
-            disabled={false}
+            disabled={!inputToken}
           />
 
           <DropdownButton
@@ -86,7 +86,7 @@ const SwapInterface = () => {
             type="number"
             placeholder="0.0"
             value={0}
-            disabled={false}
+            disabled={!outputToken}
           />
 
           <DropdownButton
