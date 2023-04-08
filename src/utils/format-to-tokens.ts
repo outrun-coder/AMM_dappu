@@ -5,5 +5,7 @@ export const toTokens = (bnObj: any) => {
 };
 
 export const toWei = (n: any) => {
-  return ethers.utils.parseUnits(n, 'ether');
+  return (n !== 0)
+    ? ethers.utils.parseUnits(n, 'ether')
+    : 0;
 };

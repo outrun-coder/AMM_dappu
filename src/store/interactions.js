@@ -123,7 +123,7 @@ export const loadBalances = async (dispatch, args) => {
 
 export const requestSwap = async (args) => {
   // config
-  const testing = true;
+  const testing = false;
 
   // pre-flight
   const {

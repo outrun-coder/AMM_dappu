@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 import {
   Form,
@@ -24,6 +24,8 @@ const SwapInterface = () => {
   const balances = useSelector(state => state.tokens.balances);
 
   const ammContract = useSelector(state => state.amm.contract);
+
+  const dispatch = useDispatch();
 
   // init
   const [price, setPrice] = useState(0);
@@ -107,22 +109,29 @@ const SwapInterface = () => {
 
   const swapHandler = async (e) => {
     e.preventDefault();
+    const symbol = inputToken;
+    const targetContract = (symbol === 'DAPPU') ? 0 : 1;
+    const tokenContract = tokenContracts[targetContract];
+    const amount = toWei(inputAmount);
 
-    if (inputToken === outputToken) {
+    if (symbol === outputToken) {
       window.alert('Invalid Token Pair!');
+      return;
+    }
+
+    if (!amount || amount === 0) {
+      window.alert('Please add an input amount.');
+      return;
     }
 
     // HACK 
-    const targetContract = (inputToken === 'DAPPU') ? 0 : 1;
-    const tokenContract = tokenContracts[targetContract]
-    const _inputAmount = toWei(inputAmount);
 
     requestSwap({
       provider,
       ammContract,
       tokenContract,
-      symbol: inputToken,
-      amount:_inputAmount,
+      symbol,
+      amount,
       dispatch: null // fix <<
     });
   };
