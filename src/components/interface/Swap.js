@@ -35,6 +35,7 @@ const SwapInterface = () => {
     if (inputToken === outputToken) {
       // not exchangeable
       setPrice(0);
+      setOutputAmountTo(0);
       return;
     } else {
       // HACK - HARD-CODED exchange rate direction should be replace with: output / input 
@@ -43,15 +44,17 @@ const SwapInterface = () => {
         : (await ammContract.dappuTokenBalance() / await ammContract.musdcTokenBalance()) // T1 / T2   ||   DAPPU / MUSDC
       // getPrice
       setPrice(priceDirection);
+
+      calcExchangeForAmount();
     } 
 
     // done
     setIsLoading(false);
   };
 
-  const inputHandler = async (e) => {
+  const calcExchangeForAmount = async (e) => {
     let willReceive;
-    const enteredValue = e.target.value;
+    const enteredValue = (!e) ? inputAmount : e.target.value;
     const IOnotSelected = !inputToken || !outputToken;
     const IOisSame = inputToken === outputToken;
     const canNotQuote = IOnotSelected || IOisSame;
@@ -65,6 +68,7 @@ const SwapInterface = () => {
     if (inputToken === 'DAPPU') {
       if (enteredValue <= 0) {
         setOutputAmountTo(0);
+        return;
       } else {
         const _dappuAmount = toWei(enteredValue);
         const calcResult = await ammContract.calculateDAPPU_swap(_dappuAmount);
@@ -73,7 +77,16 @@ const SwapInterface = () => {
         setOutputAmountTo(willReceive);
       }
     } else {
-
+      if (enteredValue <= 0) {
+        setOutputAmountTo(0);
+        return;
+      } else {
+        const _musdcAmount = toWei(enteredValue);
+        const calcResult = await ammContract.calculateMUSDC_swap(_musdcAmount);
+        willReceive = toTokens(calcResult);
+  
+        setOutputAmountTo(willReceive);
+      }
     }
   };
 
@@ -97,7 +110,7 @@ const SwapInterface = () => {
             placeholder="0.0"
             min="0.0"
             step="any"
-            onChange={(e) => {inputHandler(e)}}
+            onChange={(e) => {calcExchangeForAmount(e)}}
             disabled={!inputToken}
           />
 
