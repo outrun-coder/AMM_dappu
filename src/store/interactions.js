@@ -2,7 +2,9 @@ import { ethers } from 'ethers'
 import {
   setAmmContract,
   setShares,
-  startSwapRequest
+  startSwapRequest,
+  finishSwapRequest,
+  failSwapRequest
 } from './toolkit-slices/amm';
 
 import {
@@ -166,12 +168,18 @@ export const requestSwap = async (args) => {
       
       await trx.wait();
 
+      dispatch(finishSwapRequest({
+        transactionHash: trx.hash
+      }));
     }
 
     return;
-  } catch(err) {
+  } catch(error) {
     // TODO - LOG ERROR AND GRACEFULLY FAIL
-    console.error(`>> SWAP REQUEST FAILED! ERROR:`, err);
+    console.error(`>> SWAP REQUEST FAILED! ERROR:`, error);
+    dispatch(failSwapRequest({
+      error: 'Swap Failed!'
+    }));
   }
 
 };

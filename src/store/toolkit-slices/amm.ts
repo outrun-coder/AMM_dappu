@@ -9,7 +9,8 @@ export const ammReducerSlice = createSlice({
     swapRequest: {
       isRunning: false,
       isSuccess: 0,
-      transactionHash: null
+      transactionHash: null,
+      error: null
     }
   },
   reducers: {
@@ -24,7 +25,28 @@ export const ammReducerSlice = createSlice({
         // Next run reset...
         isRunning: true,
         isSuccess: 0,
-        transactionHash: null
+        transactionHash: null,
+        error: null
+      };
+    },
+    finishSwapRequest: (state, action) => {
+      const { transactionHash } = action.payload;
+      state.swapRequest = {
+        // SUCCESS
+        isRunning: false,
+        isSuccess: 1,
+        transactionHash,
+        error: null
+      };
+    },
+    failSwapRequest: (state, action) => {
+      const { error } = action.payload;
+      state.swapRequest = {
+        // FAIL ( ! )
+        isRunning: false,
+        isSuccess: -1,
+        transactionHash: null,
+        error
       };
     }
   }
@@ -35,7 +57,9 @@ const { actions, reducer } = ammReducerSlice;
 export const {
   setAmmContract,
   setShares,
-  startSwapRequest
+  startSwapRequest,
+  finishSwapRequest,
+  failSwapRequest
 } = actions;
 
 export default reducer;

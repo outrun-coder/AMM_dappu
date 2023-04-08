@@ -14,7 +14,10 @@ import {
 import { toTokens, toWei } from "../../utils/format-to-tokens";
 import { delay } from "../../utils/delay";
 
-import { requestSwap } from "../../store/interactions";
+import {
+  requestSwap,
+  loadBalances
+} from "../../store/interactions";
 
 const SwapInterface = () => {
   const provider = useSelector(state => state.network.connection);
@@ -25,7 +28,12 @@ const SwapInterface = () => {
   const balances = useSelector(state => state.tokens.balances);
 
   const ammContract = useSelector(state => state.amm.contract);
-  const isSwapping = useSelector(state => state.amm.swapRequest.isRunning);
+  const {
+    isRunning: isSwapping,
+    isSuccess,
+    transactionHash,
+    error: swapError
+  } = useSelector(state => state.amm.swapRequest);
 
   const dispatch = useDispatch();
 
@@ -55,7 +63,7 @@ const SwapInterface = () => {
       const priceDirection = (inputToken === 'DAPPU')
         ? (await ammContract.musdcTokenBalance() / await ammContract.dappuTokenBalance()) // T2 / T1   ||   MUSDC / DAPPU
         : (await ammContract.dappuTokenBalance() / await ammContract.musdcTokenBalance()) // T1 / T2   ||   DAPPU / MUSDC
-      // getPrice
+      
       setPrice(priceDirection);
 
       calcExchangeForAmount();
@@ -126,9 +134,7 @@ const SwapInterface = () => {
       return;
     }
 
-    // HACK 
-
-    requestSwap({
+    await requestSwap({
       provider,
       ammContract,
       tokenContract,
@@ -136,6 +142,13 @@ const SwapInterface = () => {
       amount,
       dispatch
     });
+
+    await loadBalances(dispatch, {
+      tokenContracts,
+      ammContract,
+      account
+    });
+    await cycleExchangeRate();
   };
 
   //
@@ -216,6 +229,25 @@ const SwapInterface = () => {
           Exchange Rate: {price}
         </Form.Text>
       </Row>
+
+      {swapError ? (
+        <Row className="my-3">
+          <div  style={{ dispaly: 'block', margin: '0 auto' }}>
+            {swapError}
+          </div>
+        </Row>
+      ) : (<></>)}
+
+      {isSuccess ? (
+        <Row className="my-3">
+          <div  style={{ display: 'block', margin: '0 auto' }}>
+            Swap was successful! 
+          </div>
+          <div  style={{ display: 'block', margin: '0 auto', fontSize: '8px' }}>
+            <strong>{transactionHash}</strong>
+          </div>
+        </Row>
+      ) : (<></>)}
     </Form>
   );
 }
