@@ -118,3 +118,57 @@ export const loadBalances = async (dispatch, args) => {
   const shares = await ammContract.shares(account);
   dispatch(setShares(toTokens(shares)));
 }
+
+// ! SWAP
+
+export const requestSwap = async (args) => {
+  // config
+  const testing = true;
+
+  // pre-flight
+  const {
+    provider,
+    ammContract,
+    tokenContract,
+    symbol,
+    amount,
+    dispatch
+  } = args;
+
+  // dynamic args
+  const SWAP_METHODS = {
+    DAPPU: 'swapDappu',
+    MUSDC: 'swapMusdc'
+  };
+  const swapMethod = SWAP_METHODS[symbol];
+
+  try {
+    // send it...
+    let trx;
+    const signer = await provider.getSigner();
+  
+    console.log(`>> WILL USE: ${swapMethod}`);
+    console.table({
+      symbol,
+      amount: toTokens(amount),
+      testing
+    });
+    if (!testing) {
+      
+      console.log(`>> Approving transferFrom request...`);
+      trx = await tokenContract.connect(signer).approve(ammContract.address, amount);
+
+      console.log(`Sending swap request`);
+      trx = await ammContract.connect(signer)[swapMethod](amount);
+      
+      await trx.wait();
+
+    }
+
+    return;
+  } catch(err) {
+    // TODO - LOG ERROR AND GRACEFULLY FAIL
+    console.error(`>> SWAP REQUEST FAILED! ERROR:`, err);
+  }
+
+};

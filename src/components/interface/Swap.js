@@ -13,9 +13,10 @@ import {
 import { toTokens, toWei } from "../../utils/format-to-tokens";
 import { delay } from "../../utils/delay";
 
-
+import { requestSwap } from "../../store/interactions";
 
 const SwapInterface = () => {
+  const provider = useSelector(state => state.network.connection);
   const account = useSelector(state => state.network.account);
 
   const tokenContracts = useSelector(state => state.tokens.contracts);
@@ -104,6 +105,30 @@ const SwapInterface = () => {
     }
   };
 
+  const swapHandler = async (e) => {
+    e.preventDefault();
+
+    if (inputToken === outputToken) {
+      window.alert('Invalid Token Pair!');
+    }
+
+    // HACK 
+    const targetContract = (inputToken === 'DAPPU') ? 0 : 1;
+    const tokenContract = tokenContracts[targetContract]
+    const _inputAmount = toWei(inputAmount);
+
+    requestSwap({
+      provider,
+      ammContract,
+      tokenContract,
+      symbol: inputToken,
+      amount:_inputAmount,
+      dispatch: null // fix <<
+    });
+  };
+
+  //
+
   // TODO - SHOULD BE A UTIL
   const getIOBalanceOf = (token) => {
     const key = symbols.indexOf(token)
@@ -120,7 +145,7 @@ const SwapInterface = () => {
   }, [inputToken, outputToken]);
 
   return (
-    <Form style={{ maxWidth: '450px'}} className="mx-auto px-4">
+    <Form onSubmit={swapHandler} style={{ maxWidth: '450px'}} className="mx-auto px-4">
       <Row className='My-3'>
         <div className="d-flex justify-content-between">
           <Form.Label><strong>Input:</strong></Form.Label>

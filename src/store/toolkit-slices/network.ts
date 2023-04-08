@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 export const networkReducerSlice = createSlice({
   name: 'network_reducer',
   initialState: {
-    connection: null,
+    connection: null, // or === "provider"
     chainId: null,
     account: null
   },
