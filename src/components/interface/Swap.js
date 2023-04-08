@@ -39,8 +39,8 @@ const SwapInterface = () => {
     } else {
       // HACK - HARD-CODED exchange rate direction should be replace with: output / input 
       const priceDirection = (inputToken === 'DAPPU')
-        ? (await ammContract.dappuTokenBalance() / await ammContract.musdcTokenBalance()) // T1 / T2   ||   DAPPU / MUSDC
-        : (await ammContract.musdcTokenBalance() / await ammContract.dappuTokenBalance()) // T2 / T1   ||   MUSDC / DAPPU
+        ? (await ammContract.musdcTokenBalance() / await ammContract.dappuTokenBalance()) // T2 / T1   ||   MUSDC / DAPPU
+        : (await ammContract.dappuTokenBalance() / await ammContract.musdcTokenBalance()) // T1 / T2   ||   DAPPU / MUSDC
       // getPrice
       setPrice(priceDirection);
     } 
