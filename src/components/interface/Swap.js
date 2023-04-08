@@ -11,11 +11,17 @@ import {
 } from 'react-bootstrap';
 
 import { toTokens, toWei } from "../../utils/format-to-tokens";
+import { delay } from "../../utils/delay";
 
 
 
 const SwapInterface = () => {
   const account = useSelector(state => state.network.account);
+
+  const tokenContracts = useSelector(state => state.tokens.contracts);
+  const symbols = useSelector(state => state.tokens.symbols);
+  const balances = useSelector(state => state.tokens.balances);
+
   const ammContract = useSelector(state => state.amm.contract);
 
   // init
@@ -29,6 +35,8 @@ const SwapInterface = () => {
   // IO
   const [inputAmount, setInputAmountTo] = useState(0);
   const [outputAmount, setOutputAmountTo] = useState(0);
+
+  const [] = useState(0);
 
   const cycleExchangeRate = async () => {
     // switch token selection cases
@@ -60,7 +68,13 @@ const SwapInterface = () => {
     const canNotQuote = IOnotSelected || IOisSame;
 
     if (canNotQuote) {
-      window.alert('>> CAN NOT QUOTE! >>');
+      console.error('>> CAN NOT QUOTE! >>');
+
+      // FIX - DOES NOT RESET INPUT FIELD WHEN FOCUS IS APPLIED
+      await delay(2000);
+      console.log('... RESETING');
+      setInputAmountTo(0);
+      setOutputAmountTo(0);
       return;
     }
 
@@ -90,6 +104,15 @@ const SwapInterface = () => {
     }
   };
 
+  // TODO - SHOULD BE A UTIL
+  const getIOBalanceOf = (token) => {
+    const key = symbols.indexOf(token)
+    const balance = (key !== -1)
+      ? balances[key]
+      : 0;
+    return parseInt(balance).toFixed(2);
+  }
+
   useEffect(() => {
     if (inputToken && outputToken) {
       cycleExchangeRate();
@@ -101,7 +124,7 @@ const SwapInterface = () => {
       <Row className='My-3'>
         <div className="d-flex justify-content-between">
           <Form.Label><strong>Input:</strong></Form.Label>
-          <Form.Text muted>Balance:</Form.Text>
+          <Form.Text muted>Balance: {getIOBalanceOf(inputToken)}</Form.Text>
         </div>
 
         <InputGroup id="tokens-in" className="token-alotment">
@@ -127,7 +150,7 @@ const SwapInterface = () => {
       <Row className='My-4'>
         <div className="d-flex justify-content-between">
           <Form.Label><strong>Output:</strong></Form.Label>
-          <Form.Text muted>Balance:</Form.Text>
+          <Form.Text muted>Balance: {getIOBalanceOf(outputToken)}</Form.Text>
         </div>
 
         <InputGroup id="tokens-out" className="token-alotment">
