@@ -10,6 +10,10 @@ import {
   Row
 } from 'react-bootstrap';
 
+import { toTokens, toWei } from "../../utils/format-to-tokens";
+
+
+
 const SwapInterface = () => {
   const account = useSelector(state => state.network.account);
   const ammContract = useSelector(state => state.amm.contract);
@@ -21,6 +25,10 @@ const SwapInterface = () => {
   // token select
   const [inputToken, setInputToken] = useState(null);
   const [outputToken, setOutputToken] = useState(null);
+  
+  // IO
+  const [inputAmount, setInputAmountTo] = useState(0);
+  const [outputAmount, setOutputAmountTo] = useState(0);
 
   const cycleExchangeRate = async () => {
     // switch token selection cases
@@ -39,6 +47,34 @@ const SwapInterface = () => {
 
     // done
     setIsLoading(false);
+  };
+
+  const inputHandler = async (e) => {
+    let willReceive;
+    const enteredValue = e.target.value;
+    const IOnotSelected = !inputToken || !outputToken;
+    const IOisSame = inputToken === outputToken;
+    const canNotQuote = IOnotSelected || IOisSame;
+
+    if (canNotQuote) {
+      window.alert('>> CAN NOT QUOTE! >>');
+      return;
+    }
+
+    setInputAmountTo(enteredValue);
+    if (inputToken === 'DAPPU') {
+      if (enteredValue <= 0) {
+        setOutputAmountTo(0);
+      } else {
+        const _dappuAmount = toWei(enteredValue);
+        const calcResult = await ammContract.calculateDAPPU_swap(_dappuAmount);
+        willReceive = toTokens(calcResult);
+  
+        setOutputAmountTo(willReceive);
+      }
+    } else {
+
+    }
   };
 
   useEffect(() => {
@@ -61,7 +97,7 @@ const SwapInterface = () => {
             placeholder="0.0"
             min="0.0"
             step="any"
-            value={0}
+            onChange={(e) => {inputHandler(e)}}
             disabled={!inputToken}
           />
 
@@ -85,7 +121,7 @@ const SwapInterface = () => {
           <Form.Control
             type="number"
             placeholder="0.0"
-            value={0}
+            value={ outputAmount === 0 ? "" : outputAmount }
             disabled={!outputToken}
           />
 
