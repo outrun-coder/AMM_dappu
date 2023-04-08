@@ -14,22 +14,38 @@ const SwapInterface = () => {
   const account = useSelector(state => state.network.account);
   const ammContract = useSelector(state => state.amm.contract);
 
+  // init
   const [price, setPrice] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
-  const initSwapInterface = async () => {
-    // getPrice
-    setPrice((await ammContract.dappuTokenBalance() / await ammContract.musdcTokenBalance()));
+  // token select
+  const [inputToken, setInputToken] = useState(null);
+  const [outputToken, setOutputToken] = useState(null);
+
+  const cycleExchangeRate = async () => {
+    // switch token selection cases
+    if (inputToken === outputToken) {
+      // not exchangeable
+      setPrice(0);
+      return;
+    } else {
+      // HACK - HARD-CODED exchange rate direction should be replace with: output / input 
+      const priceDirection = (inputToken === 'DAPPU')
+        ? (await ammContract.dappuTokenBalance() / await ammContract.musdcTokenBalance()) // T1 / T2   ||   DAPPU / MUSDC
+        : (await ammContract.musdcTokenBalance() / await ammContract.dappuTokenBalance()) // T2 / T1   ||   MUSDC / DAPPU
+      // getPrice
+      setPrice(priceDirection);
+    } 
 
     // done
     setIsLoading(false);
   };
 
   useEffect(() => {
-    if (isLoading) {
-      initSwapInterface()
+    if (inputToken && outputToken) {
+      cycleExchangeRate();
     }
-  }, [isLoading]);
+  }, [inputToken, outputToken]);
 
   return (
     <Form style={{ maxWidth: '450px'}} className="mx-auto px-4">
@@ -51,9 +67,9 @@ const SwapInterface = () => {
 
           <DropdownButton
             variant="outline-secondary"
-            title="Select Token">
-              <Dropdown.Item>DAPPU</Dropdown.Item>
-              <Dropdown.Item>MUSDC</Dropdown.Item>
+            title={inputToken ? inputToken : "Select Token"}>
+              <Dropdown.Item onClick={(e) => setInputToken(e.target.innerHTML)}>DAPPU</Dropdown.Item>
+              <Dropdown.Item onClick={(e) => setInputToken(e.target.innerHTML)}>MUSDC</Dropdown.Item>
           </DropdownButton>
         </InputGroup>
 
@@ -75,9 +91,9 @@ const SwapInterface = () => {
 
           <DropdownButton
             variant="outline-secondary"
-            title="Select Token">
-              <Dropdown.Item>DAPPU</Dropdown.Item>
-              <Dropdown.Item>MUSDC</Dropdown.Item>
+            title={outputToken ? outputToken : "Select Token"}>
+              <Dropdown.Item onClick={(e) => setOutputToken(e.target.innerHTML)}>DAPPU</Dropdown.Item>
+              <Dropdown.Item onClick={(e) => setOutputToken(e.target.innerHTML)}>MUSDC</Dropdown.Item>
           </DropdownButton>
         </InputGroup>
       </Row>
