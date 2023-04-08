@@ -7,7 +7,8 @@ import {
   Dropdown,
   DropdownButton,
   Button,
-  Row
+  Row,
+  Spinner
 } from 'react-bootstrap';
 
 import { toTokens, toWei } from "../../utils/format-to-tokens";
@@ -24,6 +25,7 @@ const SwapInterface = () => {
   const balances = useSelector(state => state.tokens.balances);
 
   const ammContract = useSelector(state => state.amm.contract);
+  const isSwapping = useSelector(state => state.amm.swapRequest.isRunning);
 
   const dispatch = useDispatch();
 
@@ -132,7 +134,7 @@ const SwapInterface = () => {
       tokenContract,
       symbol,
       amount,
-      dispatch: null // fix <<
+      dispatch
     });
   };
 
@@ -205,7 +207,11 @@ const SwapInterface = () => {
       </Row>
 
       <Row className='my-3'>
-        <Button type='submit'>Swap</Button>
+        {(isSwapping) ? (
+          <Spinner animation="grow" style={{ dispaly: 'block', margin: '0 auto' }}/>
+        ) : (
+          <Button type='submit'>Swap</Button>
+        )}
         <Form.Text muted>
           Exchange Rate: {price}
         </Form.Text>

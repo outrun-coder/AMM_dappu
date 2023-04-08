@@ -1,7 +1,8 @@
 import { ethers } from 'ethers'
 import {
   setAmmContract,
-  setShares
+  setShares,
+  startSwapRequest
 } from './toolkit-slices/amm';
 
 import {
@@ -143,6 +144,8 @@ export const requestSwap = async (args) => {
   const swapMethod = SWAP_METHODS[symbol];
 
   try {
+    dispatch(startSwapRequest());
+
     // send it...
     let trx;
     const signer = await provider.getSigner();
